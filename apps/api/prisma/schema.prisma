@@ -1,0 +1,240 @@
+// Plataforma de centrales de taxi — modelo de datos del nucleo.
+// Los enums reflejan packages/shared/src/enums.ts (mantener sincronizados).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  CENTRAL_ADMIN
+  DRIVER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum CentralStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum DriverStatus {
+  AVAILABLE
+  BUSY
+  IN_SERVICE
+  OFFLINE
+  SOS
+}
+
+enum ServiceStatus {
+  PENDING
+  ASSIGNED
+  ACCEPTED
+  EN_ROUTE
+  PICKED_UP
+  FINISHED
+  CANCELLED
+}
+
+enum SosStatus {
+  OPEN
+  ACKNOWLEDGED
+  CLOSED
+}
+
+enum TransmissionMode {
+  ONCE
+  TIMED
+  UNTIL_REVOKED
+}
+
+model Central {
+  id        String        @id @default(uuid())
+  name      String
+  status    CentralStatus @default(ACTIVE)
+  city      String
+  address   String
+  phone     String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  users    User[]
+  services Service[]
+
+  @@index([status])
+}
+
+model User {
+  id           String     @id @default(uuid())
+  role         UserRole
+  username     String     @unique
+  passwordHash String
+  fullName     String
+  phone        String?
+  email        String?
+  photoUrl     String?
+  status       UserStatus @default(ACTIVE)
+  centralId    String?
+  central      Central?   @relation(fields: [centralId], references: [id], onDelete: SetNull)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  driverProfile     DriverProfile?
+  dispatchedServices Service[]      @relation("Dispatcher")
+  sentMessages      ChatMessage[]   @relation("Sender")
+  receivedMessages  ChatMessage[]   @relation("Recipient")
+  notifications     Notification[]
+  activityLogs      ActivityLog[]   @relation("Actor")
+
+  @@index([role])
+  @@index([centralId])
+  @@index([status])
+}
+
+model DriverProfile {
+  id            String       @id @default(uuid())
+  userId        String       @unique
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentId    String
+  taxiNumber    String
+  plate         String
+  vehicleModel  String
+  vehicleColor  String
+  vehicleYear   Int
+  currentStatus DriverStatus @default(OFFLINE)
+  updatedAt     DateTime     @updatedAt
+
+  positions     GpsPosition[]
+  services      Service[]      @relation("DriverServices")
+  sosIncidents  SosIncident[]
+  permissions   TransmissionPermission[]
+
+  @@index([currentStatus])
+}
+
+model GpsPosition {
+  id         String        @id @default(uuid())
+  driverId   String
+  driver     DriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  lat        Float
+  lng        Float
+  speed      Float?
+  heading    Float?
+  recordedAt DateTime      @default(now())
+
+  @@index([driverId, recordedAt(sort: Desc)])
+}
+
+model Service {
+  id            String        @id @default(uuid())
+  centralId     String
+  central       Central       @relation(fields: [centralId], references: [id], onDelete: Cascade)
+  dispatcherId  String
+  dispatcher    User          @relation("Dispatcher", fields: [dispatcherId], references: [id])
+  driverId      String?
+  driver        DriverProfile? @relation("DriverServices", fields: [driverId], references: [id], onDelete: SetNull)
+
+  clientName    String
+  clientPhone   String
+  originAddress String
+  originLat     Float
+  originLng     Float
+  destAddress   String?
+  notes         String?
+
+  status        ServiceStatus @default(PENDING)
+  distanceKm    Float?
+  durationMin   Int?
+
+  createdAt     DateTime      @default(now())
+  assignedAt    DateTime?
+  acceptedAt    DateTime?
+  finishedAt    DateTime?
+
+  @@index([centralId, status])
+  @@index([driverId])
+  @@index([status])
+}
+
+model ChatMessage {
+  id           String   @id @default(uuid())
+  senderId     String
+  sender       User     @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId  String
+  recipient    User     @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  centralId    String?
+  body         String
+  attachmentUrl String?
+  readAt       DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([senderId, recipientId, createdAt])
+  @@index([recipientId, readAt])
+}
+
+model SosIncident {
+  id        String    @id @default(uuid())
+  driverId  String
+  driver    DriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  centralId String
+  lat       Float
+  lng       Float
+  status    SosStatus @default(OPEN)
+  createdAt DateTime  @default(now())
+  closedAt  DateTime?
+
+  @@index([centralId, status])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt])
+}
+
+// Auditoria inmutable: la app nunca actualiza ni borra estas filas.
+model ActivityLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  actor      User?    @relation("Actor", fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String?
+  entityId   String?
+  ip         String?
+  userAgent  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([action])
+}
+
+model TransmissionPermission {
+  id          String           @id @default(uuid())
+  driverId    String
+  driver      DriverProfile    @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  centralId   String
+  mode        TransmissionMode
+  grantedById String?
+  status      String           @default("PENDING")
+  expiresAt   DateTime?
+  createdAt   DateTime         @default(now())
+
+  @@index([centralId, status])
+}

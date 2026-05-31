@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: taxi_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-taxi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taxi}
+      POSTGRES_DB: ${POSTGRES_DB:-taxi_platform}
+    ports:
+      - "5432:5432"
+    volumes:
+      # En postgres:18 los datos viven bajo /var/lib/postgresql (subdirectorio por version).
+      - taxi_pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taxi} -d ${POSTGRES_DB:-taxi_platform}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  taxi_pgdata:

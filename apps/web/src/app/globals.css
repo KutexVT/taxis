@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-surface text-slate-200 antialiased;
+  background-image: radial-gradient(
+      1200px 600px at 80% -10%,
+      rgba(245, 179, 1, 0.06),
+      transparent 60%
+    ),
+    radial-gradient(900px 500px at -10% 110%, rgba(59, 130, 246, 0.06), transparent 60%);
+  background-attachment: fixed;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-surface-border bg-surface-raised shadow-card;
+  }
+}

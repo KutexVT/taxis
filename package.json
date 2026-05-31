@@ -1,0 +1,28 @@
+{
+  "name": "taxi-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma web empresarial para centrales de taxi, despacho, comunicacion en tiempo real, GPS de flotas y administracion global.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@taxi/api & npm run dev --workspace=@taxi/web",
+    "dev:api": "npm run dev --workspace=@taxi/api",
+    "dev:web": "npm run dev --workspace=@taxi/web",
+    "build": "npm run build --workspace=@taxi/shared && npm run build --workspace=@taxi/api && npm run build --workspace=@taxi/web",
+    "build:shared": "npm run build --workspace=@taxi/shared",
+    "prisma:generate": "npm run prisma:generate --workspace=@taxi/api",
+    "prisma:migrate": "npm run prisma:migrate --workspace=@taxi/api",
+    "prisma:seed": "npm run prisma:seed --workspace=@taxi/api",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "prisma": {
+    "seed": "tsx apps/api/prisma/seed.ts"
+  }
+}
