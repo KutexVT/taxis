@@ -10,6 +10,7 @@ import {
   type DriverPositionBroadcast,
 } from '@taxi/shared';
 import { Badge } from '@/components/ui/Badge';
+import { MapControls } from '@/components/map/MapControls';
 import { useApi } from '@/lib/hooks';
 import { useSocketConnection, useSocketEvent } from '@/lib/socket';
 
@@ -27,8 +28,7 @@ interface LiveResponse {
   drivers: DriverState[];
 }
 
-// Centro por defecto: San Jose, Costa Rica.
-const DEFAULT_CENTER: [number, number] = [9.9281, -84.0907];
+const DEFAULT_CENTER: [number, number] = [9.3706169, -83.7046444];
 
 const statusColor: Record<string, string> = {
   AVAILABLE: '#22c55e',
@@ -56,6 +56,7 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
   useSocketConnection();
   const { data } = useApi<LiveResponse>(fetchPath);
   const [drivers, setDrivers] = useState<Record<string, DriverState>>({});
+  const [expanded, setExpanded] = useState(false);
   const seeded = useRef(false);
 
   // Siembra el estado inicial una vez que llegan los datos REST.
@@ -131,7 +132,11 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_280px]">
-      <div className="card overflow-hidden" style={{ height: '70vh' }}>
+      {expanded && <div className="fixed inset-0 z-40 bg-black/75" aria-hidden />}
+      <div
+        className={`card overflow-hidden ${expanded ? 'fixed inset-4 z-50' : ''}`}
+        style={{ height: expanded ? 'auto' : '70vh' }}
+      >
         <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
           <TileLayer
             attribution='&copy; OpenStreetMap'
@@ -153,6 +158,7 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
               </Popup>
             </Marker>
           ))}
+          <MapControls expanded={expanded} onToggleExpanded={() => setExpanded((value) => !value)} />
         </MapContainer>
       </div>
 

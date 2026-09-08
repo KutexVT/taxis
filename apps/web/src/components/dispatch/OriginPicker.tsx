@@ -3,8 +3,10 @@
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useState } from 'react';
+import { MapControls } from '@/components/map/MapControls';
 
-const DEFAULT_CENTER: [number, number] = [9.9281, -84.0907];
+const DEFAULT_CENTER: [number, number] = [9.3706169, -83.7046444];
 
 const pin = L.divIcon({
   className: 'origin-pin',
@@ -30,17 +32,26 @@ export function OriginPicker({
   value: { lat: number; lng: number } | null;
   onPick: (lat: number, lng: number) => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <div className="overflow-hidden rounded-lg border border-surface-border" style={{ height: 220 }}>
-      <MapContainer
-        center={value ? [value.lat, value.lng] : DEFAULT_CENTER}
-        zoom={13}
-        style={{ height: '100%', width: '100%' }}
+    <>
+      {expanded && <div className="fixed inset-0 z-40 bg-black/75" aria-hidden />}
+      <div
+        className={`overflow-hidden rounded-lg border border-surface-border ${expanded ? 'fixed inset-4 z-50' : ''}`}
+        style={{ height: expanded ? 'auto' : 220 }}
       >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
-        <ClickHandler onPick={onPick} />
-        {value && <Marker position={[value.lat, value.lng]} icon={pin} />}
-      </MapContainer>
-    </div>
+        <MapContainer
+          center={value ? [value.lat, value.lng] : DEFAULT_CENTER}
+          zoom={13}
+          style={{ height: '100%', width: '100%' }}
+        >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
+          <ClickHandler onPick={onPick} />
+          {value && <Marker position={[value.lat, value.lng]} icon={pin} />}
+          <MapControls expanded={expanded} onToggleExpanded={() => setExpanded((current) => !current)} />
+        </MapContainer>
+      </div>
+    </>
   );
 }
