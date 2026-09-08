@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { useState } from 'react';
 import { MapControls } from '@/components/map/MapControls';
 
-const DEFAULT_CENTER: [number, number] = [9.3706169, -83.7046444];
+const DEFAULT_CENTER: [number, number] = [10.0919563, -84.7306073];
 
 const pin = L.divIcon({
   className: 'origin-pin',

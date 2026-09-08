@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ places: [] });
   }
 
-  const params = new URLSearchParams({ q: query, limit: '5', lat: '9.3706169', lon: '-83.7046444' });
+  const params = new URLSearchParams({ q: query, limit: '5', lat: '10.0919563', lon: '-84.7306073' });
 
   try {
     const response = await fetch(`https://photon.komoot.io/api?${params}`, {

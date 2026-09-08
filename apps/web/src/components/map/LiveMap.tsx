@@ -28,7 +28,7 @@ interface LiveResponse {
   drivers: DriverState[];
 }
 
-const DEFAULT_CENTER: [number, number] = [9.3706169, -83.7046444];
+const DEFAULT_CENTER: [number, number] = [10.0919563, -84.7306073];
 
 const statusColor: Record<string, string> = {
   AVAILABLE: '#22c55e',
