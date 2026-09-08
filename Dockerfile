@@ -41,4 +41,4 @@ COPY --from=build /app/apps/web/.next/static ./apps/web/apps/web/.next/static
 COPY --from=build /app/apps/web/public ./apps/web/public
 
 EXPOSE 4000 3000
-CMD ["/bin/sh", "-c", "if [ \"$SERVICE_ROLE\" = api ]; then npx prisma migrate deploy --schema apps/api/prisma/schema.prisma && exec node apps/api/dist/index.js; else exec node apps/web/server.js; fi"]
+CMD ["/bin/sh", "-c", "if [ \"$SERVICE_ROLE\" = api ]; then npx prisma migrate deploy --schema apps/api/prisma/schema.prisma && exec node apps/api/dist/index.js; else exec env PORT=3000 HOSTNAME=0.0.0.0 node apps/web/server.js; fi"]
