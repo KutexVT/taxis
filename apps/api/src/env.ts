@@ -12,7 +12,7 @@ dotenv.config({ path: path.resolve(here, '../.env') });
 /** Carga y valida las variables de entorno al arrancar; falla rapido si faltan. */
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  API_PORT: z.coerce.number().default(4000),
+  API_PORT: z.coerce.number().default(Number(process.env.PORT) || 4000),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL es obligatorio'),
   JWT_ACCESS_SECRET: z.string().min(8, 'JWT_ACCESS_SECRET muy corto'),
   JWT_REFRESH_SECRET: z.string().min(8, 'JWT_REFRESH_SECRET muy corto'),
