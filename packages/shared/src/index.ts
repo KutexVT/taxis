@@ -23,3 +23,12 @@ export interface LoginResponse {
   user: PublicUser;
   accessToken: string;
 }
+
+export interface MapPinDTO {
+  id: string;
+  centralId: string | null;
+  name: string;
+  color: string;
+  lat: number;
+  lng: number;
+}

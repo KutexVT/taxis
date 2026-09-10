@@ -92,6 +92,29 @@ export const sosTriggerSchema = z.object({
   lng: z.number().min(-180).max(180),
 });
 
+export const MAP_PIN_COLORS = [
+  '#ef4444',
+  '#f97316',
+  '#f5b301',
+  '#22c55e',
+  '#06b6d4',
+  '#3b82f6',
+  '#8b5cf6',
+  '#ec4899',
+] as const;
+
+const mapPinFields = {
+  name: z.string().trim().min(1, 'El nombre es obligatorio').max(80),
+  color: z.enum(MAP_PIN_COLORS, { errorMap: () => ({ message: 'Color invalido' }) }),
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+};
+
+export const createMapPinSchema = z.object(mapPinFields);
+export const updateMapPinSchema = z.object(mapPinFields).partial();
+export type CreateMapPinInput = z.infer<typeof createMapPinSchema>;
+export type UpdateMapPinInput = z.infer<typeof updateMapPinSchema>;
+
 // ====== Esquemas de actualizacion (Fase 2) ======
 
 export const updateCentralSchema = centralSchema.partial();

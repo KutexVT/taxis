@@ -16,6 +16,7 @@ import { notificationsRouter } from '../notifications/router.js';
 import { sosRouter } from '../sos/router.js';
 import { statsRouter } from '../stats/router.js';
 import { activityRouter } from '../activity/router.js';
+import { mapPinsRouter } from '../mapPins/router.js';
 
 /**
  * Construye la app Express con middlewares base, routers y manejo de errores.
@@ -64,6 +65,7 @@ export function createApp(): Express {
   app.use('/api/sos', sosRouter);
   app.use('/api/stats', statsRouter);
   app.use('/api/activity', activityRouter);
+  app.use('/api/map-pins', mapPinsRouter);
 
   // 404 para rutas no encontradas bajo /api.
   app.use('/api', (_req, res) => {

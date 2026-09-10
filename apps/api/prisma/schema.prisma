@@ -70,8 +70,23 @@ model Central {
 
   users    User[]
   services Service[]
+  mapPins  MapPin[]
 
   @@index([status])
+}
+
+model MapPin {
+  id        String   @id @default(uuid())
+  centralId String?
+  central   Central? @relation(fields: [centralId], references: [id], onDelete: Cascade)
+  name      String
+  color     String
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([centralId])
 }
 
 model User {

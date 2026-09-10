@@ -11,6 +11,7 @@ import {
 } from '@taxi/shared';
 import { Badge } from '@/components/ui/Badge';
 import { MapControls } from '@/components/map/MapControls';
+import { MapPins } from '@/components/map/MapPins';
 import { useApi } from '@/lib/hooks';
 import { useSocketConnection, useSocketEvent } from '@/lib/socket';
 
@@ -158,6 +159,7 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
               </Popup>
             </Marker>
           ))}
+          <MapPins />
           <MapControls expanded={expanded} onToggleExpanded={() => setExpanded((value) => !value)} />
         </MapContainer>
       </div>
