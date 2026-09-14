@@ -81,6 +81,7 @@ model MapPin {
   central   Central? @relation(fields: [centralId], references: [id], onDelete: Cascade)
   name      String
   color     String
+  shape     String   @default("pin")
   lat       Float
   lng       Float
   createdAt DateTime @default(now())
@@ -190,6 +191,9 @@ model ChatMessage {
   centralId    String?
   body         String
   attachmentUrl String?
+  attachmentData Bytes?
+  attachmentName String?
+  attachmentType String?
   readAt       DateTime?
   createdAt    DateTime @default(now())
 

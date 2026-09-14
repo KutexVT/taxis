@@ -8,6 +8,7 @@ import {
 } from '@taxi/shared';
 import { prisma } from '../prisma.js';
 import { logger } from '../logger.js';
+import { logActivity } from '../lib/activity.js';
 import type { JwtPayload } from '../auth/tokens.js';
 
 /** Contexto del taxista cacheado en el socket para no consultar en cada update. */
@@ -67,6 +68,13 @@ export async function onDriverConnect(
   };
   io.to(room.central(ctx.centralId)).emit(SocketEvent.PRESENCE_ONLINE, presence);
   io.to(room.globalAdmins()).emit(SocketEvent.PRESENCE_ONLINE, presence);
+  await logActivity({
+    actorId: ctx.userId,
+    action: 'driver.online',
+    entityType: 'DriverProfile',
+    entityId: ctx.profileId,
+    metadata: { taxiNumber: ctx.taxiNumber },
+  });
 
   return ctx;
 }
@@ -119,4 +127,11 @@ export async function onDriverDisconnect(io: IOServer, ctx: DriverContext) {
   const presence = { driverId: ctx.profileId, centralId: ctx.centralId };
   io.to(room.central(ctx.centralId)).emit(SocketEvent.PRESENCE_OFFLINE, presence);
   io.to(room.globalAdmins()).emit(SocketEvent.PRESENCE_OFFLINE, presence);
+  await logActivity({
+    actorId: ctx.userId,
+    action: 'driver.offline',
+    entityType: 'DriverProfile',
+    entityId: ctx.profileId,
+    metadata: { taxiNumber: ctx.taxiNumber },
+  });
 }

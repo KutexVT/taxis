@@ -1,0 +1,1 @@
+ALTER TABLE "MapPin" ADD COLUMN "shape" TEXT NOT NULL DEFAULT 'pin';

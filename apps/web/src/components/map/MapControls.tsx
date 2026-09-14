@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
+import type { MapPinDTO } from '@taxi/shared';
 
 interface Place {
   id: string;
@@ -14,9 +15,11 @@ interface Place {
 export function MapControls({
   expanded,
   onToggleExpanded,
+  pins = [],
 }: {
   expanded: boolean;
   onToggleExpanded: () => void;
+  pins?: MapPinDTO[];
 }) {
   const map = useMap();
   const inputId = useId();
@@ -82,6 +85,11 @@ export function MapControls({
     map.flyTo([place.lat, place.lng], Math.max(map.getZoom(), 14));
   }
 
+  const pinPlaces = query.trim().length < 2 ? [] : pins
+    .filter((pin) => pin.name.toLocaleLowerCase('es').includes(query.trim().toLocaleLowerCase('es')))
+    .map((pin) => ({ id: `pin-${pin.id}`, label: `${pin.name} · Pin`, lat: pin.lat, lng: pin.lng }));
+  const results = [...pinPlaces, ...places];
+
   return (
     <div ref={controls}>
       <div
@@ -104,9 +112,9 @@ export function MapControls({
         {open && query.trim().length >= 2 && (
           <div className="mt-1 max-h-64 overflow-y-auto rounded-xl border border-surface-border bg-surface-raised shadow-card">
             {loading && <p className="px-4 py-3 text-sm text-slate-400">Buscando...</p>}
-            {!loading && error && <p className="px-4 py-3 text-sm text-red-300">No se pudo buscar</p>}
-            {!loading && !error && places.length === 0 && <p className="px-4 py-3 text-sm text-slate-400">Sin resultados</p>}
-            {!loading && !error && places.map((place) => (
+            {!loading && error && pinPlaces.length === 0 && <p className="px-4 py-3 text-sm text-red-300">No se pudo buscar</p>}
+            {!loading && !error && results.length === 0 && <p className="px-4 py-3 text-sm text-slate-400">Sin resultados</p>}
+            {!loading && results.map((place) => (
               <button
                 key={place.id}
                 type="button"

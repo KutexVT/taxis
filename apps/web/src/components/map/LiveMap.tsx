@@ -8,6 +8,7 @@ import {
   DriverStatus,
   SocketEvent,
   type DriverPositionBroadcast,
+  type MapPinDTO,
 } from '@taxi/shared';
 import { Badge } from '@/components/ui/Badge';
 import { MapControls } from '@/components/map/MapControls';
@@ -57,6 +58,7 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
   useSocketConnection();
   const { data } = useApi<LiveResponse>(fetchPath);
   const [drivers, setDrivers] = useState<Record<string, DriverState>>({});
+  const [mapPins, setMapPins] = useState<MapPinDTO[]>([]);
   const [expanded, setExpanded] = useState(false);
   const seeded = useRef(false);
 
@@ -159,8 +161,8 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
               </Popup>
             </Marker>
           ))}
-          <MapPins />
-          <MapControls expanded={expanded} onToggleExpanded={() => setExpanded((value) => !value)} />
+          <MapPins onPinsChange={setMapPins} />
+          <MapControls pins={mapPins} expanded={expanded} onToggleExpanded={() => setExpanded((value) => !value)} />
         </MapContainer>
       </div>
 

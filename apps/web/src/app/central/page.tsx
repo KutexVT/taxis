@@ -19,7 +19,7 @@ export default function CentralDashboard() {
       {!data ? (
         <p className="text-sm text-slate-400">Cargando metricas...</p>
       ) : (
-        <MetricsGrid m={data} />
+        <MetricsGrid m={data} interactive />
       )}
     </DashboardShell>
   );

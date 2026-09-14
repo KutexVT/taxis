@@ -77,6 +77,8 @@ export interface ChatMessageDTO {
   recipientId: string;
   body: string;
   attachmentUrl: string | null;
+  attachmentName?: string | null;
+  attachmentType?: string | null;
   createdAt: string;
   mine: boolean;
 }
@@ -120,8 +122,10 @@ export interface ActivityLogDTO {
   entityType: string | null;
   entityId: string | null;
   ip: string | null;
+  userAgent: string | null;
+  metadata: Record<string, unknown> | null;
   createdAt: string;
-  actor: { fullName: string; username: string; role: import('@taxi/shared').UserRole } | null;
+  actor: { id: string; fullName: string; username: string; role: import('@taxi/shared').UserRole } | null;
 }
 
 export type { UserStatus };

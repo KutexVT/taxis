@@ -90,6 +90,6 @@ async function manageablePin(auth: NonNullable<Request['auth']>, id: string) {
   return pin;
 }
 
-function toDTO(pin: { id: string; centralId: string | null; name: string; color: string; lat: number; lng: number }) {
-  return { id: pin.id, centralId: pin.centralId, name: pin.name, color: pin.color, lat: pin.lat, lng: pin.lng };
+function toDTO(pin: { id: string; centralId: string | null; name: string; color: string; shape: string; lat: number; lng: number }) {
+  return { id: pin.id, centralId: pin.centralId, name: pin.name, color: pin.color, shape: pin.shape, lat: pin.lat, lng: pin.lng };
 }

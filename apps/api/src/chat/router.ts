@@ -1,4 +1,5 @@
 import { Router, type Request } from 'express';
+import { z } from 'zod';
 import { SocketEvent, UserRole, chatMessageSchema, room } from '@taxi/shared';
 import { prisma } from '../prisma.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
@@ -10,6 +11,37 @@ import type { JwtPayload } from '../auth/tokens.js';
 
 export const chatRouter = Router();
 chatRouter.use(requireAuth);
+
+const messageSelect = { id: true, senderId: true, recipientId: true, body: true, attachmentUrl: true, attachmentName: true, attachmentType: true, createdAt: true } as const;
+const mediaSchema = z.object({
+  recipientId: z.string().uuid(),
+  name: z.string().min(1).max(180),
+  type: z.enum(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm', 'audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav', 'application/pdf']),
+  body: z.string().max(2000).default(''),
+  data: z.string().min(1).max(14_000_000),
+});
+
+// Bounded private attachments live with the message so deployment restarts cannot lose them.
+chatRouter.post('/media', asyncHandler(async (req, res) => {
+  const data = parseOrThrow(mediaSchema, req.body);
+  const attachmentData = Buffer.from(data.data, 'base64');
+  if (!attachmentData.length) throw badRequest('Archivo vacío');
+  if (attachmentData.length > 10 * 1024 * 1024) return res.status(413).json({ error: 'El archivo supera el límite permitido de 10 MB' });
+  const recipient = await prisma.user.findUnique({ where: { id: data.recipientId }, select: { role: true, centralId: true } });
+  if (!recipient || !canChat(req.auth!, recipient)) throw forbidden();
+  const message = await prisma.chatMessage.create({ data: { senderId: req.auth!.sub, recipientId: data.recipientId, centralId: req.auth!.centralId, body: data.body ?? '', attachmentData, attachmentName: data.name, attachmentType: data.type }, select: messageSelect });
+  const io = getIo();
+  io.to(room.user(data.recipientId)).emit(SocketEvent.CHAT_MESSAGE, { ...message, mine: false });
+  io.to(room.user(req.auth!.sub)).emit(SocketEvent.CHAT_MESSAGE, { ...message, mine: true });
+  res.status(201).json({ message: { ...message, mine: true } });
+}));
+
+chatRouter.get('/media/:id', asyncHandler(async (req, res) => {
+  const message = await prisma.chatMessage.findFirst({ where: { id: req.params.id, OR: [{ senderId: req.auth!.sub }, { recipientId: req.auth!.sub }] }, select: { attachmentData: true, attachmentType: true } });
+  if (!message?.attachmentData) throw notFound('Archivo no encontrado');
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ data: message.attachmentData.toString('base64'), type: message.attachmentType });
+}));
 
 /**
  * Reglas de comunicacion:
@@ -73,6 +105,7 @@ chatRouter.get(
         ],
       },
       orderBy: { createdAt: 'asc' },
+      select: messageSelect,
       take: 200,
     });
 
@@ -88,6 +121,8 @@ chatRouter.get(
         recipientId: m.recipientId,
         body: m.body,
         attachmentUrl: m.attachmentUrl,
+        attachmentName: m.attachmentName,
+        attachmentType: m.attachmentType,
         createdAt: m.createdAt.toISOString(),
         mine: m.senderId === me.sub,
       })),

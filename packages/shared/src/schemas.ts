@@ -103,9 +103,22 @@ export const MAP_PIN_COLORS = [
   '#ec4899',
 ] as const;
 
+export const MAP_PIN_SHAPES = [
+  'pin',
+  'house',
+  'road',
+  'tree',
+  'shop',
+  'hospital',
+  'school',
+  'parking',
+] as const;
+export type MapPinShape = typeof MAP_PIN_SHAPES[number];
+
 const mapPinFields = {
   name: z.string().trim().min(1, 'El nombre es obligatorio').max(80),
   color: z.enum(MAP_PIN_COLORS, { errorMap: () => ({ message: 'Color invalido' }) }),
+  shape: z.enum(MAP_PIN_SHAPES, { errorMap: () => ({ message: 'Forma invalida' }) }).default('pin'),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
 };

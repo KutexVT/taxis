@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { useAuth } from '@/store/auth';
 import { ApiError } from '@/lib/api';
 
@@ -10,9 +10,15 @@ export function SosButton() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
-  async function trigger() {
-    if (sending) return;
-    if (!confirm('¿Activar alerta SOS? Tu central sera notificada de inmediato.')) return;
+  async function trigger(event: MouseEvent<HTMLAnchorElement>) {
+    if (sending) {
+      event.preventDefault();
+      return;
+    }
+    if (!confirm('¿Activar alerta SOS y abrir el teléfono con 911 marcado? Tu central será notificada de inmediato.')) {
+      event.preventDefault();
+      return;
+    }
     setSending(true);
     try {
       const coords = await getPosition();
@@ -30,15 +36,16 @@ export function SosButton() {
   }
 
   return (
-    <button
+    <a
+      href="tel:911"
       onClick={trigger}
-      disabled={sending}
-      className="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-accent-red font-black text-white shadow-lg transition active:scale-95 disabled:opacity-70"
-      aria-label="Boton SOS"
+      aria-disabled={sending}
+      className={`fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-accent-red font-black text-white shadow-lg transition active:scale-95 ${sending ? 'opacity-70' : ''}`}
+      aria-label="Activar SOS y llamar al 911"
     >
       <span className="absolute inline-flex h-full w-full rounded-full bg-accent-red/60 animate-pulse-ring" />
       <span className="relative">{sent ? '✓' : 'SOS'}</span>
-    </button>
+    </a>
   );
 }
 

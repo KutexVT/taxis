@@ -17,9 +17,11 @@ activityRouter.get(
   asyncHandler(async (req, res) => {
     const auth = req.auth!;
     const where: Prisma.ActivityLogWhereInput = {};
+    const actorWhere: Prisma.UserWhereInput = {};
 
     if (req.query.action) where.action = { contains: String(req.query.action) };
     if (req.query.actorId) where.actorId = String(req.query.actorId);
+    if (Object.values(UserRole).includes(req.query.role as UserRole)) actorWhere.role = req.query.role as UserRole;
     if (req.query.from || req.query.to) {
       where.createdAt = {};
       if (req.query.from) where.createdAt.gte = new Date(String(req.query.from));
@@ -27,34 +29,43 @@ activityRouter.get(
     }
     // El locutor solo ve la actividad de los usuarios de su central.
     if (auth.role === UserRole.CENTRAL_ADMIN) {
-      where.actor = { centralId: auth.centralId };
+      actorWhere.centralId = auth.centralId;
     }
+    if (Object.keys(actorWhere).length) where.actor = actorWhere;
 
     const take = Math.min(Number(req.query.limit) || 50, 200);
     const skip = Number(req.query.offset) || 0;
 
-    const [logs, total] = await Promise.all([
+    const [logs, total, actors] = await Promise.all([
       prisma.activityLog.findMany({
         where,
-        include: { actor: { select: { fullName: true, username: true, role: true } } },
+        include: { actor: { select: { id: true, fullName: true, username: true, role: true } } },
         orderBy: { createdAt: 'desc' },
         take,
         skip,
       }),
       prisma.activityLog.count({ where }),
+      prisma.user.findMany({
+        where: auth.role === UserRole.CENTRAL_ADMIN ? { centralId: auth.centralId } : {},
+        select: { id: true, fullName: true, username: true, role: true },
+        orderBy: { fullName: 'asc' },
+      }),
     ]);
 
     res.json({
       total,
+      actors,
       logs: logs.map((l) => ({
         id: l.id,
         action: l.action,
         entityType: l.entityType,
         entityId: l.entityId,
         ip: l.ip,
+        userAgent: l.userAgent,
+        metadata: l.metadata,
         createdAt: l.createdAt.toISOString(),
         actor: l.actor
-          ? { fullName: l.actor.fullName, username: l.actor.username, role: l.actor.role }
+          ? { id: l.actor.id, fullName: l.actor.fullName, username: l.actor.username, role: l.actor.role }
           : null,
       })),
     });

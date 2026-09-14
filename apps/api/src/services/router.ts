@@ -86,6 +86,7 @@ servicesRouter.post(
       action: 'service.create',
       entityType: 'Service',
       entityId: service.id,
+      metadata: { ...dto },
       req,
     });
     res.status(201).json({ service: dto });
@@ -228,7 +229,7 @@ servicesRouter.post(
       action: 'service.assign',
       entityType: 'Service',
       entityId: service.id,
-      metadata: { driverId },
+      metadata: { ...dto, previousStatus: service.status },
       req,
     });
     res.json({ service: dto });
@@ -261,6 +262,7 @@ servicesRouter.post(
       action: 'service.accept',
       entityType: 'Service',
       entityId: service.id,
+      metadata: { ...dto, previousStatus: service.status },
       req,
     });
     res.json({ service: dto });
@@ -292,6 +294,13 @@ servicesRouter.post(
       action: 'service.reject',
       entityType: 'Service',
       entityId: service.id,
+      metadata: {
+        ...dto,
+        previousStatus: service.status,
+        rejectedDriver: service.driver
+          ? { fullName: service.driver.user?.fullName, taxiNumber: service.driver.taxiNumber }
+          : null,
+      },
       req,
     });
     res.json({ service: dto });
@@ -352,6 +361,7 @@ servicesRouter.post(
       action: `service.status.${status.toLowerCase()}`,
       entityType: 'Service',
       entityId: service.id,
+      metadata: { ...dto, previousStatus: service.status },
       req,
     });
     res.json({ service: dto });

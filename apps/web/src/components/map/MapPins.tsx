@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import L, { type LeafletMouseEvent, type LeafletEvent } from 'leaflet';
 import { Marker, Tooltip, useMapEvents } from 'react-leaflet';
-import { MAP_PIN_COLORS, UserRole, type MapPinDTO } from '@taxi/shared';
+import { MAP_PIN_COLORS, MAP_PIN_SHAPES, UserRole, type MapPinDTO, type MapPinShape } from '@taxi/shared';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/store/auth';
 
@@ -11,21 +11,33 @@ interface PinDraft {
   id?: string;
   name: string;
   color: string;
+  shape: MapPinShape;
   lat: number;
   lng: number;
   editable: boolean;
 }
 
-function pinIcon(color: string) {
+const shapes: Record<MapPinShape, { label: string; glyph: string }> = {
+  pin: { label: 'Normal', glyph: '●' },
+  house: { label: 'Casa', glyph: '⌂' },
+  road: { label: 'Calle', glyph: '═' },
+  tree: { label: 'Árbol', glyph: '♣' },
+  shop: { label: 'Tienda', glyph: '▣' },
+  hospital: { label: 'Hospital', glyph: '✚' },
+  school: { label: 'Escuela', glyph: '◆' },
+  parking: { label: 'Parqueo', glyph: 'P' },
+};
+
+function pinIcon(color: string, shape: MapPinShape) {
   return L.divIcon({
     className: '',
-    html: `<div style="width:24px;height:24px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${color};border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.55)"></div>`,
-    iconSize: [24, 24],
-    iconAnchor: [12, 24],
+    html: `<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${color};border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);color:#fff;font:bold 14px sans-serif">${shapes[shape].glyph}</span></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
   });
 }
 
-export function MapPins() {
+export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) => void }) {
   const authFetch = useAuth((state) => state.authFetch);
   const user = useAuth((state) => state.user);
   const controls = useRef<HTMLDivElement>(null);
@@ -50,10 +62,12 @@ export function MapPins() {
     return () => { active = false; };
   }, [authFetch]);
 
+  useEffect(() => onPinsChange(pins), [onPinsChange, pins]);
+
   useMapEvents({
     click(event) {
       if (placing) {
-        setDraft({ name: '', color: MAP_PIN_COLORS[0], lat: event.latlng.lat, lng: event.latlng.lng, editable: true });
+        setDraft({ name: '', color: MAP_PIN_COLORS[0], shape: 'pin', lat: event.latlng.lat, lng: event.latlng.lng, editable: true });
         setPlacing(false);
       } else {
         setDraft(null);
@@ -82,7 +96,7 @@ export function MapPins() {
       const path = draft.id ? `/api/map-pins/${draft.id}` : '/api/map-pins';
       const result = await authFetch<{ pin: MapPinDTO }>(path, {
         method: draft.id ? 'PATCH' : 'POST',
-        body: JSON.stringify({ name: draft.name, color: draft.color, lat: draft.lat, lng: draft.lng }),
+        body: JSON.stringify({ name: draft.name, color: draft.color, shape: draft.shape, lat: draft.lat, lng: draft.lng }),
       });
       setPins((current) => draft.id
         ? current.map((pin) => pin.id === result.pin.id ? result.pin : pin)
@@ -132,7 +146,7 @@ export function MapPins() {
         <Marker
           key={pin.id}
           position={[pin.lat, pin.lng]}
-          icon={pinIcon(pin.color)}
+          icon={pinIcon(pin.color, pin.shape)}
           draggable={draft?.id === pin.id && editable(pin)}
           bubblingMouseEvents={false}
           eventHandlers={{
@@ -140,7 +154,7 @@ export function MapPins() {
             dragend: (event) => void move(pin, event),
           }}
         >
-          <Tooltip direction="top" offset={[0, -20]}>{pin.name}</Tooltip>
+          <Tooltip permanent direction="top" offset={[0, -20]}>{pin.name}</Tooltip>
         </Marker>
       ))}
 
@@ -199,7 +213,21 @@ export function MapPins() {
                       />
                     ))}
                   </div>
-                  <p className="mt-2 text-xs text-slate-300">{draft.id ? 'Arrastra el pin para moverlo' : 'Elige uno de los 8 colores'}</p>
+                  <div className="mt-3 flex flex-wrap gap-2" aria-label="Forma del pin">
+                    {MAP_PIN_SHAPES.map((shape) => (
+                      <button
+                        key={shape}
+                        type="button"
+                        onClick={() => setDraft({ ...draft, shape })}
+                        className={`flex h-8 w-8 items-center justify-center rounded-lg border text-base ${draft.shape === shape ? 'border-white bg-surface-overlay text-white' : 'border-surface-border text-slate-300'}`}
+                        aria-label={`Elegir ${shapes[shape].label}`}
+                        title={shapes[shape].label}
+                      >
+                        {shapes[shape].glyph}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-slate-300">{draft.id ? 'Arrastra el pin para moverlo' : 'Elige color y forma'}</p>
                 </div>
                 <div className="flex gap-2">
                   <button type="button" onClick={() => void save()} disabled={busy || !draft.name.trim()} className="flex-1 rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-surface disabled:opacity-50">Guardar</button>

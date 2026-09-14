@@ -4,9 +4,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { SocketEvent } from '@taxi/shared';
 import { roleLabel } from '@/lib/roles';
 import { useAuth } from '@/store/auth';
-import { ApiError } from '@/lib/api';
 import { useSocketConnection, useSocketEvent } from '@/lib/socket';
 import type { ChatContact, ChatMessageDTO } from '@/lib/types';
+import { ChatComposer } from './ChatComposer';
+import { ChatMedia } from './ChatMedia';
 
 /** Chat 1-a-1 con historial y mensajes en tiempo real. Reutilizable por todos los roles. */
 export function ChatPanel() {
@@ -15,7 +16,6 @@ export function ChatPanel() {
   const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [selected, setSelected] = useState<ChatContact | null>(null);
   const [messages, setMessages] = useState<ChatMessageDTO[]>([]);
-  const [input, setInput] = useState('');
   const selectedRef = useRef<ChatContact | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -30,10 +30,11 @@ export function ChatPanel() {
   function openConversation(c: ChatContact) {
     setSelected(c);
     selectedRef.current = c;
+    setMessages([]);
     setContacts((prev) => prev.map((x) => (x.id === c.id ? { ...x, unread: 0 } : x)));
     authFetch<{ messages: ChatMessageDTO[] }>(`/api/chat/messages?withUserId=${c.id}`)
-      .then((r) => setMessages(r.messages))
-      .catch(() => setMessages([]));
+      .then((r) => { if (selectedRef.current?.id === c.id) setMessages(r.messages); })
+      .catch(() => { if (selectedRef.current?.id === c.id) setMessages([]); });
   }
 
   useEffect(() => {
@@ -57,20 +58,16 @@ export function ChatPanel() {
     [],
   );
 
-  async function send() {
-    if (!selected || !input.trim()) return;
-    const body = input.trim();
-    setInput('');
-    try {
-      await authFetch('/api/chat/messages', {
-        method: 'POST',
-        body: JSON.stringify({ recipientId: selected.id, body }),
-      });
-      // El mensaje llega por socket (mine=true) y se agrega ahi.
-    } catch (e) {
-      alert(e instanceof ApiError ? e.message : 'No se pudo enviar');
-      setInput(body);
-    }
+  async function send(body: string, file?: File) {
+    if (!selected) return;
+    const recipientId = selected.id;
+    const result = await authFetch<{ message: ChatMessageDTO }>(file ? '/api/chat/media' : '/api/chat/messages', {
+      method: 'POST',
+      body: JSON.stringify(file
+        ? { recipientId, body, name: file.name, type: file.type, data: await fileToBase64(file) }
+        : { recipientId, body }),
+    });
+    if (selectedRef.current?.id === recipientId) setMessages((prev) => prev.some((m) => m.id === result.message.id) ? prev : [...prev, result.message]);
   }
 
   return (
@@ -124,7 +121,8 @@ export function ChatPanel() {
                         : 'bg-surface-overlay text-slate-200'
                     }`}
                   >
-                    {m.body}
+                    {m.attachmentName && <ChatMedia message={m} />}
+                    <span className="whitespace-pre-wrap break-words">{m.body}</span>
                     <span className={`mt-0.5 block text-[10px] ${m.mine ? 'text-surface/70' : 'text-slate-500'}`}>
                       {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -133,21 +131,7 @@ export function ChatPanel() {
               ))}
               <div ref={endRef} />
             </div>
-            <div className="flex gap-2 border-t border-surface-border p-3">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && send()}
-                placeholder="Escribe un mensaje..."
-                className="flex-1 rounded-lg border border-surface-border bg-surface-overlay/60 px-3 py-2 text-sm text-white outline-none focus:border-brand"
-              />
-              <button
-                onClick={send}
-                className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-surface transition hover:bg-brand-soft"
-              >
-                Enviar
-              </button>
-            </div>
+            <ChatComposer key={selected.id} onSend={send} />
           </>
         ) : (
           <div className="flex flex-1 items-center justify-center text-sm text-slate-500">
@@ -157,4 +141,13 @@ export function ChatPanel() {
       </section>
     </div>
   );
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1] ?? '');
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }

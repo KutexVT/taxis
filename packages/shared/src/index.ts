@@ -29,6 +29,7 @@ export interface MapPinDTO {
   centralId: string | null;
   name: string;
   color: string;
+  shape: import('./schemas.js').MapPinShape;
   lat: number;
   lng: number;
 }

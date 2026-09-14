@@ -81,6 +81,7 @@ sosRouter.post(
       action: 'sos.trigger',
       entityType: 'SosIncident',
       entityId: incident.id,
+      metadata: { ...payload },
       req,
     });
     res.status(201).json({ incident: payload });

@@ -34,6 +34,7 @@ export function createApp(): Express {
       credentials: true,
     }),
   );
+  app.use('/api/chat/media', express.json({ limit: '15mb' }));
   app.use(express.json({ limit: '1mb' }));
   app.use(cookieParser());
 
@@ -74,6 +75,10 @@ export function createApp(): Express {
 
   // Manejador central de errores.
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    if (err && typeof err === 'object' && 'type' in err && err.type === 'entity.too.large') {
+      res.status(413).json({ error: 'El archivo supera el límite permitido de 10 MB' });
+      return;
+    }
     if (err instanceof HttpError) {
       const details = (err as HttpError & { details?: unknown }).details;
       res.status(err.status).json({ error: err.message, code: err.code, details });
