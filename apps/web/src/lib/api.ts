@@ -1,7 +1,5 @@
 import type { LoginResponse } from '@taxi/shared';
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
-
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -22,7 +20,7 @@ interface RawOptions extends RequestInit {
  */
 export async function rawFetch<T>(path: string, opts: RawOptions = {}): Promise<T> {
   const { token, headers, ...rest } = opts;
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(path, {
     ...rest,
     credentials: 'include',
     headers: {
