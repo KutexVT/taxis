@@ -71,8 +71,22 @@ model Central {
   users    User[]
   services Service[]
   mapPins  MapPin[]
+  areas    CentralArea[]
 
   @@index([status])
+}
+
+model CentralArea {
+  id        String   @id @default(uuid())
+  centralId String
+  central   Central  @relation(fields: [centralId], references: [id], onDelete: Cascade)
+  name      String
+  color     String
+  polygon   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([centralId])
 }
 
 model MapPin {
@@ -128,6 +142,7 @@ model DriverProfile {
   vehicleColor  String
   vehicleYear   Int
   currentStatus DriverStatus @default(OFFLINE)
+  gpsSharing    Boolean      @default(false)
   updatedAt     DateTime     @updatedAt
 
   positions     GpsPosition[]

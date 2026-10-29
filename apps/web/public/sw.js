@@ -1,17 +1,19 @@
 // Service worker minimo para habilitar la PWA del taxista.
 // Estrategia: network-first; si la red falla, intenta la cache.
-const CACHE = 'taxi-pwa-v1';
+const CACHE = 'taxi-pwa-v2';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(Promise.all([caches.delete('taxi-pwa-v1'), self.clients.claim()]));
 });
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
+  // Never cache authenticated API responses across users or return old GPS data offline.
+  if (new URL(req.url).pathname.startsWith('/api/')) return;
   // Solo GET del mismo origen; el resto pasa directo (API, sockets).
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
 

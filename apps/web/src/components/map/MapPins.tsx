@@ -37,7 +37,12 @@ function pinIcon(color: string, shape: MapPinShape) {
   });
 }
 
-export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) => void }) {
+export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSelect }: {
+  onPinsChange: (pins: MapPinDTO[]) => void;
+  disabled?: boolean;
+  readOnly?: boolean;
+  onSelect?: (pin: MapPinDTO) => void;
+}) {
   const authFetch = useAuth((state) => state.authFetch);
   const user = useAuth((state) => state.user);
   const controls = useRef<HTMLDivElement>(null);
@@ -63,9 +68,11 @@ export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) =>
   }, [authFetch]);
 
   useEffect(() => onPinsChange(pins), [onPinsChange, pins]);
+  useEffect(() => { if (disabled) { setPlacing(false); setDraft(null); } }, [disabled]);
 
   useMapEvents({
     click(event) {
+      if (disabled || readOnly) return;
       if (placing) {
         setDraft({ name: '', color: MAP_PIN_COLORS[0], shape: 'pin', lat: event.latlng.lat, lng: event.latlng.lng, editable: true });
         setPlacing(false);
@@ -78,11 +85,12 @@ export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) =>
   const visiblePins = filter ? pins.filter((pin) => pin.color === filter) : pins;
 
   function editable(pin: MapPinDTO) {
-    return user?.role === UserRole.SUPER_ADMIN || Boolean(user?.centralId && pin.centralId === user.centralId);
+    return !readOnly && (user?.role === UserRole.SUPER_ADMIN || Boolean(user?.centralId && pin.centralId === user.centralId));
   }
 
   function select(pin: MapPinDTO, event: LeafletMouseEvent) {
     L.DomEvent.stopPropagation(event.originalEvent);
+    if (readOnly) { onSelect?.(pin); return; }
     setPlacing(false);
     setError(null);
     setDraft({ ...pin, editable: editable(pin) });
@@ -144,13 +152,16 @@ export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) =>
     <>
       {visiblePins.map((pin) => (
         <Marker
-          key={pin.id}
+          key={`${pin.id}-${disabled}`}
           position={[pin.lat, pin.lng]}
+          title={pin.name}
+          alt={pin.name}
           icon={pinIcon(pin.color, pin.shape)}
-          draggable={draft?.id === pin.id && editable(pin)}
+          draggable={!disabled && draft?.id === pin.id && editable(pin)}
           bubblingMouseEvents={false}
+          interactive={!disabled}
           eventHandlers={{
-            click: (event) => select(pin, event),
+            click: (event) => { if (!disabled) select(pin, event); },
             dragend: (event) => void move(pin, event),
           }}
         >
@@ -158,7 +169,7 @@ export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) =>
         </Marker>
       ))}
 
-      <div ref={controls}>
+      {!readOnly && <div ref={controls}>
         <div className="absolute left-3 top-16 z-[1000] flex max-w-[calc(100%-1.5rem)] gap-2 overflow-x-auto rounded-xl border border-surface-border bg-surface/95 p-2 shadow-card">
           <button
             type="button"
@@ -182,6 +193,7 @@ export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) =>
 
         <button
           type="button"
+          disabled={disabled}
           onClick={() => { setPlacing((value) => !value); setDraft(null); setError(null); }}
           className={`absolute bottom-8 left-3 z-[1000] rounded-xl border px-4 py-2 text-sm font-semibold shadow-card ${placing ? 'border-brand bg-brand text-surface' : 'border-surface-border bg-surface/95 text-white hover:bg-surface-overlay'}`}
         >
@@ -244,8 +256,8 @@ export function MapPins({ onPinsChange }: { onPinsChange: (pins: MapPinDTO[]) =>
           </div>
         )}
 
-        {error && <p className="absolute bottom-8 right-3 z-[1000] max-w-xs rounded-lg bg-accent-red px-3 py-2 text-xs text-white shadow-card">{error}</p>}
-      </div>
+      </div>}
+      {error && <p role="alert" className="absolute bottom-8 right-3 z-[1000] max-w-xs rounded-lg bg-accent-red px-3 py-2 text-xs text-white shadow-card">{error}</p>}
     </>
   );
 }

@@ -1,124 +1,112 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { SocketEvent, type GpsUpdatePayload } from '@taxi/shared';
 import { getSocket, useSocketConnection } from '@/lib/socket';
+import { useAuth } from '@/store/auth';
 
-interface LastFix {
-  lat: number;
-  lng: number;
-  speed: number;
-  heading: number;
-  at: number;
+interface GpsState {
+  sharing: boolean;
+  error: string | null;
+  fix: GpsUpdatePayload | null;
+  toggle: () => void;
 }
+const GpsContext = createContext<GpsState | null>(null);
 
-/** Activa/desactiva el envio de GPS del taxista usando geolocalizacion del navegador. */
-export function GpsShare() {
+/** Lives in the driver layout so switching pages never stops the GPS. */
+export function DriverGpsProvider({ children }: { children: React.ReactNode }) {
   useSocketConnection();
   const [sharing, setSharing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fix, setFix] = useState<LastFix | null>(null);
-  const watchId = useRef<number | null>(null);
+  const [fix, setFix] = useState<GpsUpdatePayload | null>(null);
+  const generation = useRef(0);
+  const userId = useAuth(state => state.user?.id);
+  const storageKey = `taxi-gps-enabled:${userId}`;
 
-  function start() {
-    setError(null);
-    if (!('geolocation' in navigator)) {
-      setError('Este dispositivo no soporta geolocalizacion.');
+  useEffect(() => {
+    setSharing(sessionStorage.getItem(storageKey) === '1');
+  }, [storageKey]);
+
+  useEffect(() => {
+    const run = ++generation.current;
+    if (!sharing) return;
+    if (!navigator.geolocation) {
+      setError('Este dispositivo no soporta geolocalización.');
+      setSharing(false);
+      sessionStorage.removeItem(storageKey);
       return;
     }
-    watchId.current = navigator.geolocation.watchPosition(
-      (pos) => {
+    const socket = getSocket();
+    let pending = false;
+    function locate() {
+      if (pending || !socket.connected) return;
+      pending = true;
+      navigator.geolocation.getCurrentPosition(pos => {
+        pending = false;
+        if (generation.current !== run) return;
         const payload: GpsUpdatePayload = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          speed: pos.coords.speed != null && pos.coords.speed >= 0 ? pos.coords.speed : 0,
-          heading: pos.coords.heading != null && !Number.isNaN(pos.coords.heading) ? pos.coords.heading : 0,
-          recordedAt: new Date().toISOString(),
+          lat: pos.coords.latitude, lng: pos.coords.longitude,
+          speed: Math.max(0, pos.coords.speed ?? 0),
+          heading: Number.isFinite(pos.coords.heading) ? pos.coords.heading! : 0,
+          recordedAt: new Date(pos.timestamp).toISOString(),
         };
-        getSocket().emit(SocketEvent.GPS_UPDATE, payload);
-        setFix({
-          lat: payload.lat,
-          lng: payload.lng,
-          speed: payload.speed ?? 0,
-          heading: payload.heading ?? 0,
-          at: Date.now(),
-        });
-      },
-      (err) => {
-        setError(
-          err.code === err.PERMISSION_DENIED
-            ? 'Permiso de ubicacion denegado. Activalo para compartir tu posicion.'
-            : 'No se pudo obtener la ubicacion.',
-        );
-        setSharing(false);
-      },
-      { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 },
-    );
-    setSharing(true);
-  }
-
-  function stop() {
-    if (watchId.current != null) {
-      navigator.geolocation.clearWatch(watchId.current);
-      watchId.current = null;
+        socket.volatile.emit(SocketEvent.GPS_UPDATE, payload);
+        setFix(payload);
+        setError(null);
+      }, failure => {
+        pending = false;
+        if (generation.current !== run) return;
+        setError(failure.code === failure.PERMISSION_DENIED
+          ? 'Permiso de ubicación denegado. Actívalo para compartir tu posición.'
+          : 'No se pudo actualizar tu ubicación. Se reintentará automáticamente.');
+        if (failure.code === failure.PERMISSION_DENIED) {
+          socket.emit(SocketEvent.GPS_STOP);
+          sessionStorage.removeItem(storageKey);
+          setSharing(false);
+        }
+      }, { enableHighAccuracy: true, maximumAge: 0, timeout: 14000 });
     }
-    setSharing(false);
+    const onVisible = () => { if (document.visibilityState === 'visible') locate(); };
+    socket.on('connect', locate);
+    document.addEventListener('visibilitychange', onVisible);
+    locate();
+    const timer = window.setInterval(locate, 15000);
+    return () => {
+      generation.current++;
+      window.clearInterval(timer);
+      socket.off('connect', locate);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [sharing, storageKey]);
+
+  function toggle() {
+    setError(null);
+    if (sharing) {
+      generation.current++;
+      sessionStorage.removeItem(storageKey);
+      getSocket().emit(SocketEvent.GPS_STOP);
+      setFix(null);
+    } else sessionStorage.setItem(storageKey, '1');
+    setSharing(!sharing);
   }
 
-  // Limpia el watcher al desmontar.
-  useEffect(() => () => {
-    if (watchId.current != null) navigator.geolocation.clearWatch(watchId.current);
-  }, []);
+  return <GpsContext.Provider value={{ sharing, error, fix, toggle }}>{children}</GpsContext.Provider>;
+}
 
+export function GpsShare() {
+  const gps = useContext(GpsContext);
+  if (!gps) return null;
   return (
     <div className="card p-6 text-center">
-      <div className="mb-4 flex justify-center">
-        <div className="relative flex h-20 w-20 items-center justify-center">
-          {sharing && (
-            <span className="absolute inline-flex h-full w-full rounded-full bg-accent-green/40 animate-pulse-ring" />
-          )}
-          <span
-            className={`relative flex h-16 w-16 items-center justify-center rounded-full text-2xl ${
-              sharing ? 'bg-accent-green/20 text-green-300' : 'bg-surface-overlay text-slate-400'
-            }`}
-          >
-            ◎
-          </span>
-        </div>
-      </div>
-
-      <h2 className="text-lg font-semibold text-white">
-        {sharing ? 'Compartiendo ubicacion' : 'Ubicacion desactivada'}
-      </h2>
-      <p className="mt-1 text-sm text-slate-400">
-        {sharing
-          ? 'Tu central ve tu posicion en tiempo real.'
-          : 'Activa el GPS para aparecer en el mapa de tu central.'}
-      </p>
-
-      {fix && (
-        <motion.p
-          key={fix.at}
-          initial={{ opacity: 0.4 }}
-          animate={{ opacity: 1 }}
-          className="mt-3 text-xs text-slate-500"
-        >
-          {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)} · {(fix.speed * 3.6).toFixed(0)} km/h
-        </motion.p>
-      )}
-      {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
-
-      <button
-        onClick={sharing ? stop : start}
-        className={`mt-5 w-full rounded-xl px-4 py-3 text-sm font-semibold transition ${
-          sharing
-            ? 'border border-surface-border text-slate-300 hover:border-accent-red/50 hover:text-red-300'
-            : 'bg-accent-green text-surface hover:opacity-90'
-        }`}
-      >
-        {sharing ? 'Detener' : 'Compartir GPS'}
-      </button>
+      <h2 className="text-lg font-semibold text-white">{gps.sharing ? 'Compartiendo ubicación' : 'Ubicación desactivada'}</h2>
+      <p className="mt-1 text-sm text-slate-400">{gps.sharing
+        ? 'Tu ubicación y presencia en centrales se actualizan automáticamente.'
+        : 'Activa el GPS para aparecer en el mapa de tu empresa.'}</p>
+      {gps.fix && <p className="mt-3 text-xs text-slate-400">{gps.fix.lat.toFixed(5)}, {gps.fix.lng.toFixed(5)} · {((gps.fix.speed ?? 0) * 3.6).toFixed(0)} km/h</p>}
+      {gps.error && <p role="alert" className="mt-3 text-sm text-red-300">{gps.error}</p>}
+      <button type="button" onClick={gps.toggle} className={`mt-5 min-h-11 w-full rounded-xl px-4 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand ${gps.sharing
+        ? 'border border-surface-border text-slate-200 hover:bg-surface-overlay'
+        : 'bg-accent-green text-surface hover:opacity-90'}`}>{gps.sharing ? 'Detener GPS' : 'Compartir GPS'}</button>
     </div>
   );
 }

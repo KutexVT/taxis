@@ -25,9 +25,11 @@ export const useAuth = create<AuthState>((set, get) => ({
   status: 'idle',
 
   bootstrap: async () => {
-    if (get().status === 'authenticated') return;
+    if (get().status !== 'idle') return;
     set({ status: 'loading' });
     const session = await refreshSession();
+    // A login/logout that completed meanwhile owns the newer session state.
+    if (get().status !== 'loading') return;
     if (session) {
       set({ user: session.user, accessToken: session.accessToken, status: 'authenticated' });
     } else {

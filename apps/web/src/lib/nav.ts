@@ -22,5 +22,6 @@ export const centralNav: NavItem[] = [
 
 export const driverNav: NavItem[] = [
   { href: '/driver', label: 'Inicio' },
+  { href: '/driver/mapa', label: 'Mapa' },
   { href: '/driver/chat', label: 'Chat' },
 ];

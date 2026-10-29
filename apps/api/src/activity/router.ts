@@ -4,6 +4,7 @@ import { UserRole } from '@taxi/shared';
 import { prisma } from '../prisma.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import { requireAuth, requireRole } from '../auth/middleware.js';
+import { forbidden } from '../lib/httpError.js';
 
 export const activityRouter = Router();
 activityRouter.use(requireAuth, requireRole(UserRole.SUPER_ADMIN, UserRole.CENTRAL_ADMIN));
@@ -29,7 +30,11 @@ activityRouter.get(
     }
     // El locutor solo ve la actividad de los usuarios de su central.
     if (auth.role === UserRole.CENTRAL_ADMIN) {
-      actorWhere.centralId = auth.centralId;
+      if (!auth.centralId) throw forbidden();
+      where.OR = [
+        { actor: { centralId: auth.centralId } },
+        { entityType: 'CentralArea', metadata: { path: ['centralId'], equals: auth.centralId } },
+      ];
     }
     if (Object.keys(actorWhere).length) where.actor = actorWhere;
 

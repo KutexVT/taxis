@@ -35,9 +35,13 @@ const actionLabel: Record<string, string> = {
   'map_pin.create': 'Creó un pin',
   'map_pin.update': 'Actualizó un pin',
   'map_pin.delete': 'Eliminó un pin',
+  'central_area.create': 'Creó una zona de central',
+  'central_area.update': 'Actualizó una zona de central',
+  'central_area.delete': 'Eliminó una zona de central',
 };
 
 const detailLabel: Record<string, string> = {
+  name: 'Nombre', color: 'Color', polygon: 'Contorno', centralId: 'Empresa',
   clientName: 'Cliente', clientPhone: 'Teléfono', originAddress: 'Origen',
   originLat: 'Latitud de origen', originLng: 'Longitud de origen', destAddress: 'Destino',
   notes: 'Notas', status: 'Estado', previousStatus: 'Estado anterior', distanceKm: 'Distancia',
@@ -54,6 +58,7 @@ const sections = [
   { id: 'sos', label: 'SOS', action: 'sos.' },
   { id: 'users', label: 'Usuarios', action: 'user.' },
   { id: 'pins', label: 'Pines', action: 'map_pin.' },
+  { id: 'areas', label: 'Zonas de central', action: 'central_area.' },
 ] as const;
 
 type SectionId = typeof sections[number]['id'];

@@ -4,16 +4,15 @@ import { UserRole, room } from '@taxi/shared';
 import { env } from '../env.js';
 import { logger } from '../logger.js';
 import { verifyAccessToken, type JwtPayload } from '../auth/tokens.js';
+import { startAreaPresence } from '../centralAreas/presence.js';
 import {
   onDriverConnect,
   onDriverDisconnect,
   registerDriverHandlers,
-  type DriverContext,
 } from './driverGateway.js';
 
 interface SocketData {
   auth: JwtPayload;
-  driver?: DriverContext;
 }
 type AppSocket = Socket & { data: SocketData };
 
@@ -33,6 +32,7 @@ export function createIo(httpServer: HttpServer): IOServer {
     cors: { origin: env.WEB_ORIGIN, credentials: true },
   });
   ioRef = io;
+  startAreaPresence(io);
 
   io.use((socket, next) => {
     const token = socket.handshake.auth?.token as string | undefined;
@@ -51,22 +51,21 @@ export function createIo(httpServer: HttpServer): IOServer {
 
     socket.join(room.user(auth.sub));
     if (auth.centralId) socket.join(room.central(auth.centralId));
+    if (auth.centralId && auth.role === UserRole.CENTRAL_ADMIN) socket.join(room.centralStaff(auth.centralId));
     if (auth.role === UserRole.SUPER_ADMIN) socket.join(room.globalAdmins());
 
     logger.info(`socket conectado user=${auth.sub} role=${auth.role}`);
 
     // Ciclo de vida del taxista: presencia + GPS.
-    if (auth.role === UserRole.DRIVER) {
-      const ctx = await onDriverConnect(io, auth);
-      if (ctx) {
-        s.data.driver = ctx;
-        registerDriverHandlers(io, socket, ctx);
-      }
-    }
+    const ready = auth.role === UserRole.DRIVER
+      ? onDriverConnect(io, auth).catch(error => { logger.error('Error conectando taxista:', error); socket.disconnect(true); return null; })
+      : Promise.resolve(null);
+    if (auth.role === UserRole.DRIVER) registerDriverHandlers(io, socket, ready);
 
     socket.on('disconnect', async (reason) => {
       logger.info(`socket desconectado user=${auth.sub} (${reason})`);
-      if (s.data.driver) await onDriverDisconnect(io, s.data.driver);
+      const driver = await ready;
+      if (driver && !io.sockets.adapter.rooms.get(room.user(auth.sub))?.size) await onDriverDisconnect(io, driver);
     });
   });
 

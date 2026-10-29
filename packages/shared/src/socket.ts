@@ -10,6 +10,8 @@ export const SocketEvent = {
   PRESENCE_OFFLINE: 'presence:offline',
   // GPS
   GPS_UPDATE: 'gps:update',
+  GPS_STOP: 'gps:stop',
+  AREA_PRESENCE: 'central_area:presence',
   // Despacho
   SERVICE_NEW: 'service:new',
   SERVICE_ASSIGNED: 'service:assigned',
@@ -65,6 +67,7 @@ export interface SosBroadcast {
 /** Rooms de Socket.io. */
 export const room = {
   central: (centralId: string) => `central:${centralId}`,
+  centralStaff: (centralId: string) => `central-staff:${centralId}`,
   user: (userId: string) => `user:${userId}`,
   globalAdmins: () => 'global:admins',
 };

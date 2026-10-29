@@ -1,6 +1,7 @@
 export * from './enums.js';
 export * from './schemas.js';
 export * from './socket.js';
+export * from './areas.js';
 
 /** DTO de usuario seguro para enviar al cliente (sin passwordHash). */
 export interface PublicUser {

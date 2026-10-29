@@ -3,27 +3,33 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
-import type { MapPinDTO } from '@taxi/shared';
+import type { CentralAreaDTO, MapPinDTO } from '@taxi/shared';
 
 interface Place {
   id: string;
   label: string;
   lat: number;
   lng: number;
+  bounds?: [number, number][];
 }
 
 export function MapControls({
   expanded,
   onToggleExpanded,
   pins = [],
+  areas = [],
+  onChoose,
 }: {
   expanded: boolean;
   onToggleExpanded: () => void;
   pins?: MapPinDTO[];
+  areas?: CentralAreaDTO[];
+  onChoose?: (place: { lat: number; lng: number }) => void;
 }) {
   const map = useMap();
   const inputId = useId();
   const controls = useRef<HTMLDivElement>(null);
+  const chosenQuery = useRef('');
   const [query, setQuery] = useState('');
   const [places, setPlaces] = useState<Place[]>([]);
   const [open, setOpen] = useState(false);
@@ -43,6 +49,7 @@ export function MapControls({
 
   useEffect(() => {
     const value = query.trim();
+    if (query === chosenQuery.current) { setLoading(false); return; }
     if (value.length < 2) {
       setPlaces([]);
       setLoading(false);
@@ -80,15 +87,21 @@ export function MapControls({
   }, [query]);
 
   function choose(place: Place) {
+    chosenQuery.current = place.label;
     setQuery(place.label);
     setOpen(false);
-    map.flyTo([place.lat, place.lng], Math.max(map.getZoom(), 14));
+    if (place.bounds) map.fitBounds(place.bounds, { padding: [30, 30], maxZoom: 17 });
+    else map.flyTo([place.lat, place.lng], Math.max(map.getZoom(), 14));
+    onChoose?.(place);
   }
 
   const pinPlaces = query.trim().length < 2 ? [] : pins
     .filter((pin) => pin.name.toLocaleLowerCase('es').includes(query.trim().toLocaleLowerCase('es')))
     .map((pin) => ({ id: `pin-${pin.id}`, label: `${pin.name} · Pin`, lat: pin.lat, lng: pin.lng }));
-  const results = [...pinPlaces, ...places];
+  const areaPlaces: Place[] = query.trim().length < 2 ? [] : areas
+    .filter(area => area.name.toLocaleLowerCase('es').includes(query.trim().toLocaleLowerCase('es')))
+    .map(area => ({ id: `area-${area.id}`, label: `${area.name} · Central`, lat: area.polygon[0].lat, lng: area.polygon[0].lng, bounds: area.polygon.map(point => [point.lat, point.lng]) }));
+  const results = [...areaPlaces, ...pinPlaces, ...places];
 
   return (
     <div ref={controls}>
@@ -103,7 +116,7 @@ export function MapControls({
           id={inputId}
           type="search"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => { chosenQuery.current = ''; setQuery(event.target.value); }}
           onFocus={() => setOpen(true)}
           placeholder="Buscar un lugar"
           autoComplete="off"
@@ -112,9 +125,9 @@ export function MapControls({
         {open && query.trim().length >= 2 && (
           <div className="mt-1 max-h-64 overflow-y-auto rounded-xl border border-surface-border bg-surface-raised shadow-card">
             {loading && <p className="px-4 py-3 text-sm text-slate-400">Buscando...</p>}
-            {!loading && error && pinPlaces.length === 0 && <p className="px-4 py-3 text-sm text-red-300">No se pudo buscar</p>}
+            {!loading && error && pinPlaces.length === 0 && areaPlaces.length === 0 && <p className="px-4 py-3 text-sm text-red-300">No se pudo buscar</p>}
             {!loading && !error && results.length === 0 && <p className="px-4 py-3 text-sm text-slate-400">Sin resultados</p>}
-            {!loading && results.map((place) => (
+            {results.map((place) => (
               <button
                 key={place.id}
                 type="button"
