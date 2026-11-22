@@ -195,7 +195,7 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
       </div>
 
       <aside className="card flex flex-col p-4" style={{ maxHeight: '70vh' }}>
-        {(presence.error || fleetError) && <div role="alert" className="mb-3 text-sm text-red-700">
+        {(presence.error || fleetError) && <div role="alert" className="mb-3 text-sm text-status-red">
           {presence.error || fleetError}
           <button type="button" className="ml-2 min-h-11 underline" onClick={() => { void presence.refresh(); if (!driverView) void refetch(); }}>Reintentar</button>
         </div>}

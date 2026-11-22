@@ -51,7 +51,7 @@ export function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="relative flex h-12 w-12 items-center justify-center rounded-full bg-surface-overlay text-ink hover:bg-neutral-200"
+        className="relative flex h-12 w-12 items-center justify-center rounded-full bg-surface-overlay text-ink hover:bg-surface-hover"
         aria-label="Notificaciones"
         aria-expanded={open}
       >

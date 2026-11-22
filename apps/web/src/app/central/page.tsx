@@ -18,10 +18,10 @@ export default function CentralDashboard() {
         <p className="mt-2 text-muted">Todo listo para coordinar el próximo viaje.</p>
       </div>
       <div className="mb-9 grid gap-4 sm:grid-cols-[1.4fr_1fr]">
-        <Link href="/central/despacho" className="flex items-center gap-5 rounded-2xl bg-surface-overlay p-6 transition-colors hover:bg-neutral-200">
+        <Link href="/central/despacho" className="flex items-center gap-5 rounded-2xl bg-surface-overlay p-6 transition-colors hover:bg-surface-hover">
           <Icon name="car" className="!h-10 !w-10 text-ink" />
           <span className="flex-1"><span className="block text-2xl font-bold text-ink">Nuevo servicio</span><span className="mt-1 block text-muted">Registra el viaje y asigna un taxi</span></span>
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-white"><Icon name="arrow" /></span>
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-surface"><Icon name="arrow" /></span>
         </Link>
         <Link href="/central/mapa" className="flex items-center gap-4 rounded-2xl border border-surface-border p-6 hover:bg-surface-overlay">
           <Icon name="map" className="!h-8 !w-8" /><span><span className="block text-xl font-semibold text-ink">Ver el mapa</span><span className="mt-1 block text-muted">Taxis, pines y centrales</span></span>

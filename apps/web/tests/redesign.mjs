@@ -5,6 +5,8 @@ import { mkdir } from 'node:fs/promises';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = process.env.REDESIGN_TEST_URL || 'http://localhost:3110';
 const artifacts = process.env.REDESIGN_SCREENSHOTS || '.impeccable/review';
+const theme = process.env.REDESIGN_THEME || 'light';
+const reducedMotion = process.env.REDESIGN_MOTION || 'reduce';
 await mkdir(artifacts, { recursive: true });
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', headless: true, args: ['--no-sandbox', '--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] });
 const company = '11111111-1111-4111-8111-111111111111';
@@ -18,7 +20,7 @@ const errors = [];
 const checked = [];
 
 async function setup(role, viewport) {
-  const context = await browser.newContext({ viewport, reducedMotion: 'reduce', permissions: ['microphone'], serviceWorkers: 'block' });
+  const context = await browser.newContext({ viewport, colorScheme: theme, reducedMotion, permissions: ['microphone'], serviceWorkers: 'block' });
   const page = await context.newPage();
   page.setDefaultTimeout(20000);
   page.on('pageerror', error => errors.push(error.message));
@@ -81,6 +83,7 @@ try {
       for (const path of paths[role]) {
         await page.goto(root + path);
         await page.locator('#contenido').waitFor();
+        assert.equal(await page.locator('html').evaluate(el => el.classList.contains('dark')), theme === 'dark');
         if (path.endsWith('/mapa') || path.endsWith('/despacho')) {
           await page.locator('.leaflet-tooltip').first().waitFor();
           await page.waitForFunction(() => [...document.querySelectorAll('.leaflet-tile')].some(tile => tile.complete && tile.naturalWidth > 0));
@@ -132,6 +135,8 @@ try {
       }
       await page.getByRole('button', { name: 'Notificaciones', exact: true }).click();
       await page.getByRole('dialog', { name: 'Notificaciones' }).waitFor();
+      const animation = await page.getByRole('dialog', { name: 'Notificaciones' }).evaluate(el => getComputedStyle(el).animationDuration);
+      assert(reducedMotion === 'reduce' ? parseFloat(animation) < .001 : parseFloat(animation) >= .2);
       await page.keyboard.press('Escape');
       assert(await page.getByRole('button', { name: 'Notificaciones', exact: true }).evaluate(el => el === document.activeElement));
       if (size === 'mobile') {

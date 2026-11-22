@@ -66,7 +66,7 @@ export function ChatComposer({ onSend }: { onSend: (body: string, file?: File) =
   }
   const small = 'flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-muted hover:bg-surface-raised hover:text-brand disabled:opacity-40';
   return <div className="shrink-0 border-t border-surface-border p-2 sm:p-3">
-    {error && <p role="alert" className="mb-2 text-xs text-red-700">{error}</p>}
+    {error && <p role="alert" className="mb-2 text-xs text-status-red">{error}</p>}
     {file && <div className="mb-3 rounded-xl bg-surface-overlay p-3 text-body">
       <div className="mb-2 flex items-center justify-between gap-2 text-xs"><span className="truncate">{file.name} · {(file.size / 1024 / 1024).toFixed(1)} MB</span><button disabled={busy} onClick={() => setFile(undefined)} aria-label="Quitar adjunto">✕</button></div>
       {file.type.startsWith('audio/') && <audio controls src={preview} className="max-w-full" />}
@@ -76,7 +76,7 @@ export function ChatComposer({ onSend }: { onSend: (body: string, file?: File) =
     <input ref={attachment} type="file" accept={accept} className="hidden" onChange={(e) => { choose(e.target.files?.[0]); e.target.value = ''; }} />
     <input ref={camera} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="hidden" onChange={(e) => { choose(e.target.files?.[0]); e.target.value = ''; }} />
     {recording ? <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-surface-overlay px-3 py-2 text-sm text-ink">
-      <span className="animate-pulse text-red-700">●</span><span role="status" className="flex-1">Grabando {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
+      <span className="animate-pulse text-status-red">●</span><span role="status" className="flex-1">Grabando {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
       <button onClick={() => { if (recorder.current) recorder.current.onstop = null; recorder.current?.stop(); stream.current?.getTracks().forEach((track) => track.stop()); setRecording(false); }}>Cancelar</button>
       <button onClick={() => recorder.current?.stop()} className="rounded-full bg-brand px-3 py-2 text-surface">Detener</button>
     </div> : <div className="flex items-end gap-2">

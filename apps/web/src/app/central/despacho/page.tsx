@@ -68,7 +68,7 @@ export default function DespachoPage() {
                         {s.distanceKm != null && <> · {s.distanceKm} km</>}
                       </p>
                     ) : (
-                      <p className="mt-1 text-xs text-amber-800">Sin asignar</p>
+                      <p className="mt-1 text-xs text-status-amber">Sin asignar</p>
                     )}
                   </div>
                   <div className="flex shrink-0 flex-col gap-2">

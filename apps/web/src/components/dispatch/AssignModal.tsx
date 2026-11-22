@@ -58,7 +58,7 @@ export function AssignModal({
         </p>
       )}
       {loading && <p className="text-sm text-muted">Buscando taxistas cercanos...</p>}
-      {err && <p className="text-sm text-red-700">{err}</p>}
+      {err && <p className="text-sm text-status-red">{err}</p>}
       <div className="space-y-2">
         {drivers.map((d) => (
           <div

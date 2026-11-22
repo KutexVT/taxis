@@ -63,7 +63,7 @@ export function DriversManager({ centrals }: { centrals: CentralDTO[] | null }) 
       </div>
 
       {loading && <p className="text-sm text-muted">Cargando...</p>}
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-sm text-status-red">{error}</p>}
 
       <div className="space-y-3">
         {data?.users.map((u) => (

@@ -56,7 +56,7 @@ export function AdminsManager({ centrals }: { centrals: CentralDTO[] }) {
       </div>
 
       {loading && <p className="text-sm text-muted">Cargando...</p>}
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-sm text-status-red">{error}</p>}
 
       <div className="space-y-3">
         {data?.users.map((u) => (
@@ -167,7 +167,7 @@ function AdminFormModal({
           <TextField label="Telefono" value={f.phone} onChange={(v) => setF({ ...f, phone: v })} />
           <TextField label="Correo" value={f.email} onChange={(v) => setF({ ...f, email: v })} />
         </div>
-        {err && <p className="text-sm text-red-700">{err}</p>}
+        {err && <p className="text-sm text-status-red">{err}</p>}
         <div className="flex justify-end pt-2">
           <PrimaryButton onClick={save} disabled={busy}>
             {busy ? 'Guardando...' : 'Guardar'}

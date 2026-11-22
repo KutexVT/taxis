@@ -120,7 +120,7 @@ export function DriverFormModal({
           </div>
         </div>
 
-        {err && <p className="text-sm text-red-700">{err}</p>}
+        {err && <p className="text-sm text-status-red">{err}</p>}
         <div className="flex justify-end pt-2">
           <PrimaryButton onClick={save} disabled={busy}>
             {busy ? 'Guardando...' : 'Guardar'}

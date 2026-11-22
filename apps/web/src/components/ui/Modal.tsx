@@ -30,7 +30,7 @@ export function Modal({
   return (
     <dialog ref={dialog} aria-labelledby={titleId} onCancel={onClose}
       onClick={event => { if (event.target === event.currentTarget) onClose(); }}
-      className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg rounded-2xl bg-white p-0 text-body shadow-card backdrop:bg-black/50">
+      className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg rounded-2xl bg-surface-raised p-0 text-body shadow-card backdrop:bg-black/50">
       {open && <div className="p-5 sm:p-6">
         <div className="mb-5 flex items-center justify-between gap-4">
           <h2 id={titleId} className="text-2xl font-bold">{title}</h2>

@@ -7,7 +7,7 @@ const accents: Record<string, string> = {
   brand: 'text-brand',
   green: 'text-accent-green',
   blue: 'text-accent-blue',
-  amber: 'text-amber-800',
+  amber: 'text-status-amber',
   red: 'text-accent-red',
   slate: 'text-body',
 };
@@ -30,10 +30,10 @@ export function StatCard({
 }) {
   const card = (
     <div
-      className={`h-full rounded-2xl bg-surface-overlay p-4 sm:p-5 ${href ? 'transition-colors hover:bg-neutral-200' : ''}`}
+      className={`h-full rounded-2xl bg-surface-overlay p-4 sm:p-5 ${href ? 'transition-colors hover:bg-surface-hover' : ''}`}
     >
       <div className="flex items-start justify-between gap-2"><p className="text-sm text-body">{label}</p>{href && <Icon name="arrow" className="!h-4 !w-4" />}</div>
-      <p className={`mt-3 text-3xl font-bold tabular-nums ${accent === 'red' ? 'text-red-700' : 'text-ink'}`}>{value}</p>
+      <p className={`mt-3 text-3xl font-bold tabular-nums ${accent === 'red' ? 'text-status-red' : 'text-ink'}`}>{value}</p>
       {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
     </div>
   );

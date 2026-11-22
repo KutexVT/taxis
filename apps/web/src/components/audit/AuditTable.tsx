@@ -142,7 +142,7 @@ export function AuditTable() {
           <input type="date" value={to} onChange={(event) => { setOffset(0); setTo(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-ink outline-none focus:border-brand" />
         </label>
         </div>
-        <button type="button" className="mt-4 min-h-12 rounded-full border border-surface-border bg-white px-4" onClick={() => { setActorId(''); setAction(''); setFrom(''); setTo(''); setOffset(0); }}>Limpiar filtros</button>
+        <button type="button" className="mt-4 min-h-12 rounded-full border border-surface-border bg-surface-raised px-4" onClick={() => { setActorId(''); setAction(''); setFrom(''); setTo(''); setOffset(0); }}>Limpiar filtros</button>
       </details>
 
       <div className="card overflow-x-auto">

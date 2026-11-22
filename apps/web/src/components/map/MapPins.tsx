@@ -170,7 +170,7 @@ export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSe
       ))}
 
       {!readOnly && <div ref={controls}>
-        <div className="absolute left-16 right-3 top-[72px] z-[1000] flex gap-2 overflow-x-auto rounded-2xl bg-white p-2 shadow-card">
+        <div className="absolute left-16 right-3 top-[72px] z-[1000] flex gap-2 overflow-x-auto rounded-2xl bg-surface-raised p-2 shadow-card">
           <button
             type="button"
             onClick={() => setFilter(null)}
@@ -196,13 +196,13 @@ export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSe
           type="button"
           disabled={disabled}
           onClick={() => { setPlacing((value) => !value); setDraft(null); setError(null); }}
-          className={`absolute left-3 z-[1000] rounded-full border px-4 py-2 text-sm font-medium ${user?.role === UserRole.SUPER_ADMIN ? 'bottom-24 sm:bottom-8' : 'bottom-8'} ${placing ? 'border-brand bg-brand text-surface' : 'border-surface-border bg-white text-ink hover:bg-surface-overlay'}`}
+          className={`absolute left-3 z-[1000] rounded-full border px-4 py-2 text-sm font-medium ${user?.role === UserRole.SUPER_ADMIN ? 'bottom-24 sm:bottom-8' : 'bottom-8'} ${placing ? 'border-brand bg-brand text-surface' : 'border-surface-border bg-surface-raised text-ink hover:bg-surface-overlay'}`}
         >
           {placing ? 'Toca el mapa' : '+ Añadir pin'}
         </button>
 
         {draft && (
-          <div className="absolute bottom-20 left-3 z-[1001] max-h-[75%] w-80 max-w-[calc(100%-1.5rem)] overflow-y-auto rounded-2xl bg-white p-4 shadow-card">
+          <div className="absolute bottom-20 left-3 z-[1001] max-h-[75%] w-80 max-w-[calc(100%-1.5rem)] overflow-y-auto rounded-2xl bg-surface-raised p-4 shadow-card">
             {draft.editable ? (
               <>
                 <input

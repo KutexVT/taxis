@@ -7,15 +7,16 @@ const config: Config = {
     extend: {
       colors: {
         surface: {
-          DEFAULT: '#ffffff',
-          raised: '#ffffff',
-          overlay: '#f3f3f3',
-          border: '#dedede',
+          DEFAULT: 'rgb(var(--surface) / <alpha-value>)',
+          raised: 'rgb(var(--surface-raised) / <alpha-value>)',
+          overlay: 'rgb(var(--surface-overlay) / <alpha-value>)',
+          border: 'rgb(var(--surface-border) / <alpha-value>)',
+          hover: 'rgb(var(--surface-hover) / <alpha-value>)',
         },
         brand: {
-          DEFAULT: '#000000',
-          soft: '#282828',
-          dark: '#000000',
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          soft: 'rgb(var(--brand-soft) / <alpha-value>)',
+          dark: 'rgb(var(--ink) / <alpha-value>)',
         },
         accent: {
           green: '#166534',
@@ -23,9 +24,15 @@ const config: Config = {
           red: '#b91c1c',
           amber: '#92400e',
         },
-        ink: '#000000',
-        body: '#333333',
-        muted: '#5e5e5e',
+        status: {
+          green: 'rgb(var(--status-green) / <alpha-value>)',
+          blue: 'rgb(var(--status-blue) / <alpha-value>)',
+          red: 'rgb(var(--status-red) / <alpha-value>)',
+          amber: 'rgb(var(--status-amber) / <alpha-value>)',
+        },
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        body: 'rgb(var(--body) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
@@ -37,16 +44,6 @@ const config: Config = {
       borderRadius: {
         xl: '0.75rem',
         '2xl': '1rem',
-      },
-      keyframes: {
-        'pulse-ring': {
-          '0%': { transform: 'scale(0.9)', opacity: '0.7' },
-          '70%': { transform: 'scale(1.6)', opacity: '0' },
-          '100%': { opacity: '0' },
-        },
-      },
-      animation: {
-        'pulse-ring': 'pulse-ring 1.6s cubic-bezier(0.4,0,0.6,1) infinite',
       },
     },
   },

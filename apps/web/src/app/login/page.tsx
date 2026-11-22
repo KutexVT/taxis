@@ -6,6 +6,7 @@ import { ApiError } from '@/lib/api';
 import { useAuth } from '@/store/auth';
 import { roleHome } from '@/lib/roles';
 import { Icon } from '@/components/ui/Icon';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function LoginPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col px-6 sm:px-10">
-      <div className="flex items-center gap-3 py-8 text-xl font-bold text-ink"><Icon name="car" />Central de Taxi</div>
+      <div className="flex items-center justify-between gap-3 py-8"><span className="flex items-center gap-3 text-xl font-bold text-ink"><Icon name="car" />Central de Taxi</span><ThemeToggle /></div>
       <div className="grid flex-1 items-center gap-16 pb-12 lg:grid-cols-2">
         <section className="hidden self-center lg:block">
           <h1 className="max-w-lg text-5xl font-bold leading-tight">Tu central.<br />Todo en un lugar.</h1>
@@ -51,19 +52,19 @@ export default function LoginPage() {
           <form onSubmit={onSubmit} className="mt-8 space-y-5">
             <label className="block">
               <span className="mb-2 block font-medium text-ink">Usuario</span>
-              <input className="field lg:bg-white" value={username} onChange={e => setUsername(e.target.value)}
+              <input className="field lg:bg-surface-raised" value={username} onChange={e => setUsername(e.target.value)}
                 name="username" autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="Escribe tu usuario" required />
             </label>
             <label className="block">
               <span className="mb-2 block font-medium text-ink">Contraseña</span>
               <span className="relative block">
-                <input className="field pr-24 lg:bg-white" type={visible ? 'text' : 'password'} value={password}
+                <input className="field pr-24 lg:bg-surface-raised" type={visible ? 'text' : 'password'} value={password}
                   onChange={e => setPassword(e.target.value)} name="password" autoComplete="current-password" placeholder="Escribe tu contraseña" required />
                 <button type="button" className="absolute right-1 top-1 px-3 text-sm font-medium text-ink"
                   aria-pressed={visible} onClick={() => setVisible(!visible)}>{visible ? 'Ocultar' : 'Mostrar'}</button>
               </span>
             </label>
-            {error && <p role="alert" className="rounded-xl bg-red-50 p-4 text-red-700">{error}</p>}
+            {error && <p role="alert" className="rounded-xl bg-status-red/10 p-4 text-status-red">{error}</p>}
             <button type="submit" disabled={loading || username.trim().length < 3 || password.length < 6} className="button-primary w-full">
               {loading ? 'Entrando…' : 'Entrar'}{!loading && <Icon name="arrow" />}
             </button>

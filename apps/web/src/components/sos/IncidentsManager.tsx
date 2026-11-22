@@ -85,7 +85,7 @@ export function IncidentsManager() {
       <h3 className="mb-3 font-semibold text-ink">Incidentes activos ({open.length})</h3>
       <div className="space-y-3">
         {open.map((i) => (
-          <div key={i.id} className="rounded-2xl border border-red-200 bg-red-50 p-4">
+          <div key={i.id} className="rounded-2xl border border-status-red/30 bg-status-red/10 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="flex flex-wrap items-center gap-2">

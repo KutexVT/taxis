@@ -10,6 +10,7 @@ import { NotificationBell } from '@/components/NotificationBell';
 import { SosButton } from '@/components/driver/SosButton';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Modal } from '@/components/ui/Modal';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export interface NavItem { href: string; label: string; icon: IconName; mobile?: boolean; }
 
@@ -39,8 +40,8 @@ export function DashboardShell({ title, nav = [], children }: {
 
   return (
     <div className="min-h-screen lg:pl-60">
-      <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-white focus:p-4">Saltar al contenido</a>
-      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-surface-border bg-white p-5 lg:flex">
+      <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-surface-raised focus:p-4">Saltar al contenido</a>
+      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-surface-border bg-surface-raised p-5 lg:flex">
         <Link href={nav[0]?.href ?? '/'} className="mb-10 flex min-h-12 items-center gap-3 text-xl font-bold text-ink">
           <Icon name="car" />Central de Taxi
         </Link>
@@ -52,7 +53,7 @@ export function DashboardShell({ title, nav = [], children }: {
         </div>
       </aside>
 
-      <header className="sticky top-0 z-20 border-b border-surface-border bg-white">
+      <header className="sticky top-0 z-20 border-b border-surface-border bg-surface-raised">
         <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between gap-3 px-4 sm:px-8">
           <div className="min-w-0">
             <p className="truncate text-lg font-bold text-ink lg:text-base">{driver ? 'Central de Taxi' : title}</p>
@@ -60,6 +61,7 @@ export function DashboardShell({ title, nav = [], children }: {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             {driver && <SosButton />}
+            <ThemeToggle />
             <NotificationBell />
           </div>
         </div>

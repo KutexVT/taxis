@@ -65,7 +65,7 @@ export function DriverServices() {
 
   return (
     <div className="space-y-3">
-      {error && <p role="alert" className="rounded-xl bg-red-50 p-4 text-red-700">{error}</p>}
+      {error && <p role="alert" className="rounded-xl bg-status-red/10 p-4 text-status-red">{error}</p>}
       {active.map((s) => (
         <article
           key={s.id}

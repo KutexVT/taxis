@@ -40,7 +40,7 @@ export function SosButton() {
       href="tel:911"
       onClick={trigger}
       aria-disabled={sending}
-      className={`inline-flex min-h-12 items-center justify-center rounded-full bg-red-50 px-4 font-semibold text-red-700 transition-colors hover:bg-red-100 ${sending ? 'opacity-70' : ''}`}
+      className={`inline-flex min-h-12 items-center justify-center rounded-full bg-status-red/10 px-4 font-semibold text-status-red transition-colors hover:bg-status-red/20 ${sending ? 'opacity-70' : ''}`}
       aria-label="Activar SOS y llamar al 911"
     >
       <span>{sent ? 'Enviado' : 'SOS'}</span>

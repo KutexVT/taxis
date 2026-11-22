@@ -48,7 +48,7 @@ export function SosAlerts() {
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-red text-xs font-black text-white">
                 SOS
               </span>
-              <p className="text-sm font-semibold text-red-700">¡Emergencia!</p>
+              <p className="text-sm font-semibold text-status-red">¡Emergencia!</p>
             </div>
             <p className="mt-2 text-sm text-ink">
               Taxi {a.taxiNumber} · {a.fullName}

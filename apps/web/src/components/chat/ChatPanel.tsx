@@ -115,7 +115,7 @@ export function ChatPanel() {
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain p-4" role="log" aria-label="Mensajes">
               {messages.length === 0 && <p className="py-5 text-center text-sm text-muted">Escribe un mensaje o envía un audio para comenzar.</p>}
               {messages.map((m) => (
-                <div key={m.id} className={`flex ${m.mine ? 'justify-end' : 'justify-start'}`}>
+                <div key={m.id} className={`chat-message flex ${m.mine ? 'justify-end' : 'justify-start'}`}>
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
                       m.mine

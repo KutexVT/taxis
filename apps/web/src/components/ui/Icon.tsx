@@ -15,6 +15,8 @@ const paths = {
   location: 'm3 10 18-7-7 18-3-8z',
   logout: 'M10 3H3v18h7 M8 12h13 m-5-5 5 5-5 5',
   phone: 'M5 3h4l2 5-3 2a14 14 0 0 0 6 6l2-3 5 2v4c0 2-2 3-4 2A20 20 0 0 1 3 7c-1-2 0-4 2-4',
+  sun: 'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M12 2v2 M12 20v2 M2 12h2 M20 12h2 M5 5l1.5 1.5 M17.5 17.5 19 19 M5 19l1.5-1.5 M17.5 6.5 19 5',
+  moon: 'M20.5 14a8.5 8.5 0 0 1-10.5-10.5A8.5 8.5 0 1 0 20.5 14Z',
 } as const;
 
 export type IconName = keyof typeof paths;

@@ -140,8 +140,8 @@ export function MapAreas({ areas, taxis, refresh, onEditingChange, fitInitially 
               {data?.centrals.map(central => <option key={central.id} value={central.id}>{central.name}</option>)}
             </select>
           </label>
-          {companyError && <p role="alert" className="text-sm text-red-700">{companyError} <button type="button" className="underline" onClick={() => void refetch()}>Reintentar</button></p>}
-          {data?.centrals.length === 0 && <p className="text-sm text-amber-800">Primero crea una empresa en Centrales</p>}
+          {companyError && <p role="alert" className="text-sm text-status-red">{companyError} <button type="button" className="underline" onClick={() => void refetch()}>Reintentar</button></p>}
+          {data?.centrals.length === 0 && <p className="text-sm text-status-amber">Primero crea una empresa en Centrales</p>}
           <label className="block text-sm">Nombre de la zona
             <input value={draft.name} maxLength={80} disabled={busy} onChange={event => setDraft({ ...draft, name: event.target.value })} placeholder="Ej. Central Centro" className="mt-1 min-h-11 w-full rounded-lg border border-surface-border bg-surface-overlay px-3 text-ink placeholder:text-muted focus:outline-brand" />
           </label>
@@ -152,12 +152,12 @@ export function MapAreas({ areas, taxis, refresh, onEditingChange, fitInitially 
           </div></fieldset>
           <button type="button" className={button} disabled={busy} onClick={() => { setDraft({ ...draft, polygon: [] }); setDrawing(true); }}>Redibujar contorno</button>
         </div>}
-        {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className="mt-3 text-sm text-status-red">{error}</p>}
         </div>
         <div className="mt-3 flex shrink-0 flex-wrap gap-2 border-t border-surface-border pt-3">
           {!drawing && <>
             <button type="button" disabled={busy || !draft.centralId || !draft.name.trim()} onClick={() => void save()} className="min-h-11 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-surface hover:bg-brand-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-white disabled:opacity-40">{busy ? 'Guardando…' : 'Guardar zona'}</button>
-            {draft.id && <button type="button" disabled={busy} className={`${button} text-red-700`} onClick={() => void remove()}>Eliminar zona</button>}
+            {draft.id && <button type="button" disabled={busy} className={`${button} text-status-red`} onClick={() => void remove()}>Eliminar zona</button>}
           </>}
           <button type="button" disabled={busy} className={button} onClick={close}>Cancelar</button>
         </div>

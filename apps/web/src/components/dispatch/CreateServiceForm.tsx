@@ -77,7 +77,7 @@ export function CreateServiceForm({ onCreated }: { onCreated: () => void }) {
         <TextField label="Dirección de origen" value={f.originAddress} onChange={(v) => set('originAddress', v)} required />
         <div>
           <p className="mb-1 text-xs font-medium text-muted">
-            Busca un lugar o toca el mapa para indicar el origen <span className="text-accent-red">*</span>
+            Busca un lugar o toca el mapa para indicar el origen <span className="text-status-red">*</span>
           </p>
           <OriginPicker value={origin} onPick={(lat, lng) => setOrigin({ lat, lng })} />
           {origin && (
@@ -88,7 +88,7 @@ export function CreateServiceForm({ onCreated }: { onCreated: () => void }) {
         </div>
         <TextField label="Destino (opcional)" value={f.destAddress} onChange={(v) => set('destAddress', v)} />
         <TextField label="Observaciones (opcional)" value={f.notes} onChange={(v) => set('notes', v)} />
-        {err && <p className="text-sm text-red-700">{err}</p>}
+        {err && <p className="text-sm text-status-red">{err}</p>}
         <div className="flex justify-end">
           <PrimaryButton onClick={submit} disabled={busy}>
             {busy ? 'Creando...' : 'Crear servicio'}

@@ -28,7 +28,7 @@ export default function CentralesPage() {
       </div>
 
       {loading && <p className="text-sm text-muted">Cargando...</p>}
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-sm text-status-red">{error}</p>}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {data?.centrals.map((c) => (
@@ -174,7 +174,7 @@ function CentralFormModal({
             ]}
           />
         )}
-        {err && <p className="text-sm text-red-700">{err}</p>}
+        {err && <p className="text-sm text-status-red">{err}</p>}
         <div className="flex items-center justify-between pt-2">
           {isEdit ? (
             <GhostButton danger onClick={remove}>

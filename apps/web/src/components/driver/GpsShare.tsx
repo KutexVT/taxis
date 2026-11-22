@@ -103,7 +103,7 @@ export function GpsShare() {
         ? 'Tu ubicación y presencia en centrales se actualizan automáticamente.'
         : 'Activa el GPS para aparecer en el mapa de tu empresa.'}</p>
       {gps.fix && <details className="mt-3 text-xs text-muted"><summary>Ver datos de ubicación</summary><p>{gps.fix.lat.toFixed(5)}, {gps.fix.lng.toFixed(5)} · {((gps.fix.speed ?? 0) * 3.6).toFixed(0)} km/h</p></details>}
-      {gps.error && <p role="alert" className="mt-3 text-sm text-red-700">{gps.error}</p>}
+      {gps.error && <p role="alert" className="mt-3 text-sm text-status-red">{gps.error}</p>}
       <button type="button" onClick={gps.toggle} aria-pressed={gps.sharing} className={`mt-5 w-full ${gps.sharing ? 'button-secondary border border-surface-border' : 'button-primary'}`}>{gps.sharing ? 'Dejar de compartir ubicación' : 'Activar mi ubicación'}</button>
     </div>
   );

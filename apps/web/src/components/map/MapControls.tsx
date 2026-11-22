@@ -126,7 +126,7 @@ export function MapControls({
         {open && query.trim().length >= 2 && (
           <div className="mt-1 max-h-64 overflow-y-auto rounded-xl border border-surface-border bg-surface-raised shadow-card">
             {loading && <p className="px-4 py-3 text-sm text-muted">Buscando...</p>}
-            {!loading && error && pinPlaces.length === 0 && areaPlaces.length === 0 && <p className="px-4 py-3 text-sm text-red-700">No se pudo buscar</p>}
+            {!loading && error && pinPlaces.length === 0 && areaPlaces.length === 0 && <p className="px-4 py-3 text-sm text-status-red">No se pudo buscar</p>}
             {!loading && !error && results.length === 0 && <p className="px-4 py-3 text-sm text-muted">Sin resultados</p>}
             {results.map((place) => (
               <button
@@ -146,7 +146,7 @@ export function MapControls({
       <button
         type="button"
         onClick={onToggleExpanded}
-        className="absolute right-2 top-3 z-[1000] flex h-12 w-12 items-center justify-center rounded-full bg-white text-ink shadow-card hover:bg-surface-overlay"
+        className="absolute right-2 top-3 z-[1000] flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised text-ink shadow-card hover:bg-surface-overlay"
         aria-label={expanded ? 'Reducir mapa' : 'Agrandar mapa'}
         title={expanded ? 'Reducir mapa' : 'Agrandar mapa'}
       >
