@@ -1,27 +1,25 @@
 import type { NavItem } from '@/components/DashboardShell';
 
 export const adminNav: NavItem[] = [
-  { href: '/admin', label: 'Inicio' },
-  { href: '/admin/mapa', label: 'Mapa' },
-  { href: '/admin/centrales', label: 'Centrales' },
-  { href: '/admin/usuarios', label: 'Usuarios' },
-  { href: '/admin/incidencias', label: 'SOS' },
-  { href: '/admin/chat', label: 'Chat' },
-  { href: '/admin/auditoria', label: 'Auditoria' },
+  { href: '/admin', label: 'Inicio', icon: 'home', mobile: true },
+  { href: '/admin/mapa', label: 'Mapa', icon: 'map', mobile: true },
+  { href: '/admin/centrales', label: 'Centrales', icon: 'building' },
+  { href: '/admin/usuarios', label: 'Usuarios', icon: 'users', mobile: true },
+  { href: '/admin/incidencias', label: 'Alertas SOS', icon: 'alert' },
+  { href: '/admin/chat', label: 'Chat', icon: 'chat', mobile: true },
+  { href: '/admin/auditoria', label: 'Historial', icon: 'history' },
 ];
-
 export const centralNav: NavItem[] = [
-  { href: '/central', label: 'Inicio' },
-  { href: '/central/mapa', label: 'Mapa' },
-  { href: '/central/despacho', label: 'Despacho' },
-  { href: '/central/taxistas', label: 'Taxistas' },
-  { href: '/central/incidencias', label: 'SOS' },
-  { href: '/central/chat', label: 'Chat' },
-  { href: '/central/historial', label: 'Historial' },
+  { href: '/central', label: 'Inicio', icon: 'home', mobile: true },
+  { href: '/central/despacho', label: 'Despacho', icon: 'car', mobile: true },
+  { href: '/central/mapa', label: 'Mapa', icon: 'map', mobile: true },
+  { href: '/central/taxistas', label: 'Taxistas', icon: 'users' },
+  { href: '/central/incidencias', label: 'Alertas SOS', icon: 'alert' },
+  { href: '/central/chat', label: 'Chat', icon: 'chat', mobile: true },
+  { href: '/central/historial', label: 'Historial', icon: 'history' },
 ];
-
 export const driverNav: NavItem[] = [
-  { href: '/driver', label: 'Inicio' },
-  { href: '/driver/mapa', label: 'Mapa' },
-  { href: '/driver/chat', label: 'Chat' },
+  { href: '/driver', label: 'Inicio', icon: 'home', mobile: true },
+  { href: '/driver/mapa', label: 'Mapa', icon: 'map', mobile: true },
+  { href: '/driver/chat', label: 'Chat', icon: 'chat', mobile: true },
 ];

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SocketEvent } from '@taxi/shared';
 import { useApi } from '@/lib/hooks';
 import { useSocketConnection, useSocketEvent } from '@/lib/socket';
@@ -14,12 +14,10 @@ export function useLiveServices(fetchPath: string) {
   useSocketConnection();
   const { data, refetch } = useApi<{ services: ServiceDTO[] }>(fetchPath);
   const [services, setServices] = useState<ServiceDTO[]>([]);
-  const seeded = useRef(false);
 
   useEffect(() => {
-    if (data && !seeded.current) {
+    if (data) {
       setServices(data.services);
-      seeded.current = true;
     }
   }, [data]);
 

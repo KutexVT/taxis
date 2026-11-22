@@ -12,7 +12,7 @@ const OriginPicker = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-[220px] items-center justify-center rounded-lg border border-surface-border">
-        <span className="text-xs text-slate-500">Cargando mapa...</span>
+        <span className="text-xs text-muted">Cargando mapa...</span>
       </div>
     ),
   },
@@ -67,28 +67,28 @@ export function CreateServiceForm({ onCreated }: { onCreated: () => void }) {
   }
 
   return (
-    <div className="card p-5">
-      <h3 className="mb-3 font-semibold text-white">Nuevo servicio</h3>
+    <div className="card p-4 sm:p-6">
+      <h1 className="mb-5 text-2xl font-bold text-ink">Nuevo servicio</h1>
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <TextField label="Cliente" value={f.clientName} onChange={(v) => set('clientName', v)} required />
-          <TextField label="Telefono" value={f.clientPhone} onChange={(v) => set('clientPhone', v)} required />
+          <TextField label="Teléfono" type="tel" value={f.clientPhone} onChange={(v) => set('clientPhone', v)} required />
         </div>
-        <TextField label="Direccion de origen" value={f.originAddress} onChange={(v) => set('originAddress', v)} required />
+        <TextField label="Dirección de origen" value={f.originAddress} onChange={(v) => set('originAddress', v)} required />
         <div>
-          <p className="mb-1 text-xs font-medium text-slate-400">
-            Punto de origen (clic en el mapa) <span className="text-accent-red">*</span>
+          <p className="mb-1 text-xs font-medium text-muted">
+            Busca un lugar o toca el mapa para indicar el origen <span className="text-accent-red">*</span>
           </p>
           <OriginPicker value={origin} onPick={(lat, lng) => setOrigin({ lat, lng })} />
           {origin && (
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-muted">
               {origin.lat.toFixed(5)}, {origin.lng.toFixed(5)}
             </p>
           )}
         </div>
         <TextField label="Destino (opcional)" value={f.destAddress} onChange={(v) => set('destAddress', v)} />
         <TextField label="Observaciones (opcional)" value={f.notes} onChange={(v) => set('notes', v)} />
-        {err && <p className="text-sm text-red-300">{err}</p>}
+        {err && <p className="text-sm text-red-700">{err}</p>}
         <div className="flex justify-end">
           <PrimaryButton onClick={submit} disabled={busy}>
             {busy ? 'Creando...' : 'Crear servicio'}

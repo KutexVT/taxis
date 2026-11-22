@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-22T21:57:07.533Z",
+  "title": "Design System: Central de Taxi",
+  "extensions": {
+    "colorMeta": {
+      "brand": { "role": "primary", "displayName": "Negro de acción", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "brand-soft": { "role": "primary", "displayName": "Negro suavizado", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "surface": { "role": "neutral", "displayName": "Blanco de trabajo", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "surface-overlay": { "role": "neutral", "displayName": "Gris de agrupación", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "surface-border": { "role": "neutral", "displayName": "Gris de separación", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "body": { "role": "neutral", "displayName": "Texto principal", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "muted": { "role": "neutral", "displayName": "Texto secundario", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "placeholder": { "role": "neutral", "displayName": "Ayuda del campo", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "neutral-hover": { "role": "neutral", "displayName": "Gris interactivo", "tonalRamp": ["#171717", "#282828", "#404040", "#5e5e5e", "#737373", "#a3a3a3", "#dedede", "#f3f3f3"] },
+      "accent-green": { "role": "semantic", "displayName": "Disponible o completado", "tonalRamp": ["#14532d", "#166534", "#15803d", "#16a34a", "#22c55e", "#4ade80", "#86efac", "#dcfce7"] },
+      "accent-blue": { "role": "semantic", "displayName": "Servicio en curso", "tonalRamp": ["#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#dbeafe"] },
+      "accent-red": { "role": "semantic", "displayName": "Peligro o cancelación", "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] },
+      "accent-amber": { "role": "semantic", "displayName": "Espera o atención", "tonalRamp": ["#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fbbf24", "#fcd34d", "#fef3c7"] },
+      "danger-surface": { "role": "semantic", "displayName": "Fondo de peligro", "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] },
+      "danger-hover": { "role": "semantic", "displayName": "Peligro interactivo", "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] },
+      "danger-border": { "role": "semantic", "displayName": "Borde de peligro", "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Encabezado", "purpose": "Títulos de página y cifras de métricas." },
+      "title": { "displayName": "Título", "purpose": "Encabezados de diálogo y sección." },
+      "body": { "displayName": "Cuerpo", "purpose": "Contenido y valores de campos." },
+      "button": { "displayName": "Acción", "purpose": "Acciones y navegación lateral." },
+      "label": { "displayName": "Etiqueta", "purpose": "Etiquetas de campos, insignias y navegación móvil." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 4px 16px rgba(0,0,0,0.12)", "purpose": "Diálogos, controles flotantes y resultados sobre el mapa." }
+    ],
+    "motion": [
+      { "name": "transition-colors", "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Transición de color de Tailwind en acciones y navegación." },
+      { "name": "reduced-motion", "value": "0.01ms", "purpose": "Con prefers-reduced-motion: reduce, duración mínima, una iteración y scroll automático." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Acción principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Píldora negra para la tarea principal.",
+      "html": "<button class=\"ds-primary\" type=\"button\">Crear servicio</button>",
+      "css": ".ds-primary{display:inline-flex;min-height:48px;align-items:center;justify-content:center;gap:8px;border:0;border-radius:9999px;background:#000;color:#fff;padding:12px 24px;font:500 16px/24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background-color 150ms cubic-bezier(.4,0,.2,1);cursor:pointer}.ds-primary:hover{background:#282828}.ds-primary:focus-visible{outline:2px solid #000;outline-offset:4px}.ds-primary:disabled{opacity:.4;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-primary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Acción secundaria",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acción gris que acompaña una tarea principal.",
+      "html": "<button class=\"ds-secondary\" type=\"button\">Cancelar</button>",
+      "css": ".ds-secondary{display:inline-flex;min-height:48px;align-items:center;justify-content:center;gap:8px;border:0;border-radius:9999px;background:#f3f3f3;color:#000;padding:12px 20px;font:500 16px/24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background-color 150ms cubic-bezier(.4,0,.2,1);cursor:pointer}.ds-secondary:hover{background:#e5e5e5}.ds-secondary:focus-visible{outline:2px solid #000;outline-offset:4px}.ds-secondary:disabled{opacity:.4;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-secondary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Acción con borde",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Botón Ghost para acciones de fila.",
+      "html": "<button class=\"ds-ghost\" type=\"button\">Editar</button>",
+      "css": ".ds-ghost{min-height:48px;border:1px solid #dedede;border-radius:9999px;background:transparent;color:#333;padding:8px 16px;font:500 16px/24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:color 150ms,border-color 150ms;cursor:pointer}.ds-ghost:hover{border-color:rgba(0,0,0,.5);color:#000}.ds-ghost:focus-visible{outline:2px solid #000;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-ghost{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Acción destructiva",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Variante roja del botón Ghost.",
+      "html": "<button class=\"ds-danger\" type=\"button\">Eliminar</button>",
+      "css": ".ds-danger{min-height:48px;border:1px solid #fecaca;border-radius:9999px;background:transparent;color:#b91c1c;padding:8px 16px;font:500 16px/24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background-color 150ms cubic-bezier(.4,0,.2,1);cursor:pointer}.ds-danger:hover{background:#fef2f2}.ds-danger:focus-visible{outline:2px solid #000;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-danger{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Campo con etiqueta",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Campo gris con etiqueta persistente y foco negro.",
+      "html": "<label class=\"ds-field-label\"><span class=\"ds-field-caption\">Nombre completo</span><input class=\"ds-field\" type=\"text\" placeholder=\"Escribe tu nombre\"></label>",
+      "css": ".ds-field-label{display:block;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}.ds-field-caption{display:block;margin-bottom:4px;color:#5e5e5e;font-size:14px;line-height:20px;font-weight:500}.ds-field{display:block;width:100%;min-height:48px;max-width:100%;box-sizing:border-box;border:1px solid transparent;border-radius:12px;background:#f3f3f3;color:#000;padding:12px 16px;font:400 16px/24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;outline:none;caret-color:#000;transition:background-color 150ms,border-color 150ms}.ds-field::placeholder{color:#666;opacity:1}.ds-field:focus{border-color:#000;box-shadow:0 0 0 1px #000}@media(prefers-reduced-motion:reduce){.ds-field{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Navegación lateral",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Fila activa y fila normal con SVG y texto.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Ejemplo de navegación\"><a class=\"ds-nav-link\" href=\"#inicio\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m3 10 9-7 9 7v11h-6v-7H9v7H3z\"/></svg><span>Inicio</span></a><a class=\"ds-nav-link\" href=\"#mapa\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2z M9 3v16 M15 5v16\"/></svg><span>Mapa</span></a></nav>",
+      "css": ".ds-nav{display:grid;gap:8px}.ds-nav-link{display:flex;box-sizing:border-box;min-height:48px;align-items:center;gap:12px;border-radius:9999px;padding:12px 16px;color:#5e5e5e;font:500 16px/24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-decoration:none;transition:background-color 150ms,color 150ms}.ds-nav-link:hover,.ds-nav-link[aria-current=page]{background:#f3f3f3;color:#000}.ds-nav-link:focus-visible{outline:2px solid #000;outline-offset:4px}.ds-nav-link svg{height:24px;width:24px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}@media(prefers-reduced-motion:reduce){.ds-nav-link{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Insignias de estado",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Estados informativos sin interacción ni significado basado solo en color.",
+      "html": "<div class=\"ds-badges\"><span class=\"ds-badge ds-closed\">Cerrado</span><span class=\"ds-badge ds-available\">Disponible</span><span class=\"ds-badge ds-pending\">Pendiente</span></div>",
+      "css": ".ds-badges{display:flex;flex-wrap:wrap;gap:8px}.ds-badge{display:inline-block;flex-shrink:0;border:1px solid;border-radius:9999px;padding:4px 12px;font:500 14px/20px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}.ds-closed{background:#f3f3f3;border-color:#dedede;color:#5e5e5e}.ds-available{background:rgba(22,101,52,.15);border-color:rgba(22,101,52,.3);color:#166534}.ds-pending{background:rgba(146,64,14,.15);border-color:rgba(146,64,14,.3);color:#92400e}"
+    },
+    {
+      "name": "Métrica enlazada",
+      "kind": "card",
+      "refersTo": "stat-card",
+      "description": "Tarjeta plana de métricas con datos sintéticos para el catálogo.",
+      "html": "<a class=\"ds-stat-link\" href=\"#servicios\" aria-label=\"Servicios activos: 8\"><div class=\"ds-stat\"><div class=\"ds-stat-row\"><span>Servicios activos</span><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 12h16 m-6-6 6 6-6 6\"/></svg></div><p class=\"ds-stat-value\">8</p><p class=\"ds-stat-hint\">Datos de ejemplo</p></div></a>",
+      "css": ".ds-stat-link{display:block;border-radius:12px;color:#333;text-decoration:none;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}.ds-stat-link:focus-visible{outline:none;box-shadow:0 0 0 2px #000}.ds-stat{height:100%;border-radius:16px;background:#f3f3f3;padding:16px;transition:background-color 150ms cubic-bezier(.4,0,.2,1)}.ds-stat-link:hover .ds-stat{background:#e5e5e5}.ds-stat-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;font-size:16px;line-height:24px}.ds-stat-row svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.ds-stat-value{margin:12px 0 0;color:#000;font-size:30px;line-height:36px;font-weight:700;font-variant-numeric:tabular-nums}.ds-stat-hint{margin:2px 0 0;color:#5e5e5e;font-size:14px;line-height:20px}@media(min-width:640px){.ds-stat{padding:20px}}@media(prefers-reduced-motion:reduce){.ds-stat{transition-duration:.01ms}}"
+    },
+    {
+      "name": "SOS",
+      "kind": "button",
+      "refersTo": "sos",
+      "description": "Muestra visual inerte de la acción SOS; no llama ni envía alertas.",
+      "html": "<button class=\"ds-sos\" type=\"button\" aria-label=\"Ejemplo visual de SOS\">SOS</button>",
+      "css": ".ds-sos{display:inline-flex;min-height:48px;align-items:center;justify-content:center;border:0;border-radius:9999px;background:#fef2f2;color:#b91c1c;padding:0 16px;font:600 16px/24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background-color 150ms cubic-bezier(.4,0,.2,1);cursor:pointer}.ds-sos:hover{background:#fee2e2}.ds-sos:focus-visible{outline:2px solid #000;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-sos{transition-duration:.01ms}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Una central que se entiende al primer toque",
+    "overview": "La dirección aprobada toma la sencillez de Uber móvil: negro para acciones principales, blanco para el espacio de trabajo y grises para campos y agrupaciones. La interfaz conserva su identidad de Central de Taxi y sus tareas de despacho, ubicación y comunicación. Prioriza lectura y uso táctil por personas mayores.\n\nLa fuente de verdad es la implementación de `apps/web/src/app/globals.css`, `apps/web/tailwind.config.ts` y los componentes compartidos. La referencia aportada en `/home/kutex/DESIGN.md` y la [presentación oficial de Uber móvil](https://www.uber.com/gb/en/u/redesigned-uber-app/) orientan el carácter, pero no sustituyen los valores implementados. No se importaron las tipografías propietarias ni la composición de marketing de Uber.",
+    "keyCharacteristics": [
+      "Acciones principales negras y redondeadas con texto visible",
+      "Superficies claras y planas con agrupación por tono y espacio",
+      "Controles amplios y etiquetas legibles en celular y computadora",
+      "Estados semánticos con palabras además del color"
+    ],
+    "rules": [
+      { "name": "The Estado Legible Rule", "body": "El color de estado siempre acompaña una palabra o una forma reconocible; nunca reemplaza la etiqueta.", "section": "colors" },
+      { "name": "The Acción Alcanzable Rule", "body": "Los controles compartidos conservan una altura mínima de 48 px y las opciones de navegación mantienen texto visible.", "section": "layout" }
+    ],
+    "dos": [
+      "Do conservar el negro para acciones principales y los grises para agrupación visual",
+      "Do mantener texto visible junto a iconos de navegación y estados",
+      "Do respetar foco de teclado, zoom y movimiento reducido",
+      "Do preservar todas las operaciones por rol al adaptar la distribución"
+    ],
+    "donts": [
+      "Don't añadir un acento de marca que compita con los colores de estado o los pines",
+      "Don't reemplazar etiquetas por placeholders o iconos sin nombre accesible",
+      "Don't aplicar sombras a todas las tarjetas",
+      "Don't importar tipografías, ilustraciones o reglas de marketing que la aplicación no utiliza"
+    ]
+  }
+}

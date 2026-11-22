@@ -170,11 +170,11 @@ export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSe
       ))}
 
       {!readOnly && <div ref={controls}>
-        <div className="absolute left-3 top-16 z-[1000] flex max-w-[calc(100%-1.5rem)] gap-2 overflow-x-auto rounded-xl border border-surface-border bg-surface/95 p-2 shadow-card">
+        <div className="absolute left-16 right-3 top-[72px] z-[1000] flex gap-2 overflow-x-auto rounded-2xl bg-white p-2 shadow-card">
           <button
             type="button"
             onClick={() => setFilter(null)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${filter === null ? 'bg-brand text-surface' : 'text-slate-200 hover:bg-surface-overlay'}`}
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${filter === null ? 'bg-brand text-surface' : 'text-body hover:bg-surface-overlay'}`}
           >
             Todos
           </button>
@@ -183,7 +183,8 @@ export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSe
               key={color}
               type="button"
               onClick={() => setFilter(color)}
-              className={`h-7 w-7 shrink-0 rounded-full border-2 ${filter === color ? 'border-white' : 'border-transparent'}`}
+              aria-pressed={filter === color}
+              className={`h-12 w-12 shrink-0 rounded-full border-2 ${filter === color ? 'border-ink ring-2 ring-ink ring-offset-2' : 'border-transparent'}`}
               style={{ backgroundColor: color }}
               aria-label={`Ver pines ${color}`}
               title={`Ver solo ${color}`}
@@ -195,21 +196,22 @@ export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSe
           type="button"
           disabled={disabled}
           onClick={() => { setPlacing((value) => !value); setDraft(null); setError(null); }}
-          className={`absolute bottom-8 left-3 z-[1000] rounded-xl border px-4 py-2 text-sm font-semibold shadow-card ${placing ? 'border-brand bg-brand text-surface' : 'border-surface-border bg-surface/95 text-white hover:bg-surface-overlay'}`}
+          className={`absolute left-3 z-[1000] rounded-full border px-4 py-2 text-sm font-medium ${user?.role === UserRole.SUPER_ADMIN ? 'bottom-24 sm:bottom-8' : 'bottom-8'} ${placing ? 'border-brand bg-brand text-surface' : 'border-surface-border bg-white text-ink hover:bg-surface-overlay'}`}
         >
           {placing ? 'Toca el mapa' : '+ Añadir pin'}
         </button>
 
         {draft && (
-          <div className="absolute bottom-20 left-3 z-[1000] w-72 max-w-[calc(100%-1.5rem)] rounded-xl border border-surface-border bg-surface/95 p-3 shadow-card">
+          <div className="absolute bottom-20 left-3 z-[1001] max-h-[75%] w-80 max-w-[calc(100%-1.5rem)] overflow-y-auto rounded-2xl bg-white p-4 shadow-card">
             {draft.editable ? (
               <>
                 <input
                   value={draft.name}
                   onChange={(event) => setDraft({ ...draft, name: event.target.value })}
                   placeholder="Nombre del pin"
+                  aria-label="Nombre del pin"
                   maxLength={80}
-                  className="mb-2 w-full rounded-lg border border-surface-border bg-surface-raised px-3 py-2 text-sm text-white outline-none focus:border-brand"
+                  className="mb-2 w-full rounded-lg border border-surface-border bg-surface-raised px-3 py-2 text-sm text-ink outline-none focus:border-brand"
                   autoFocus
                 />
                 <div className="mb-2">
@@ -219,7 +221,8 @@ export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSe
                         key={color}
                         type="button"
                         onClick={() => setDraft({ ...draft, color })}
-                        className={`h-8 w-8 rounded-full border-2 ${draft.color === color ? 'border-white' : 'border-transparent'}`}
+                        aria-pressed={draft.color === color}
+                        className={`h-12 w-12 rounded-full border-2 ${draft.color === color ? 'border-ink ring-2 ring-ink ring-offset-2' : 'border-transparent'}`}
                         style={{ backgroundColor: color }}
                         aria-label={`Elegir ${color}`}
                       />
@@ -231,26 +234,27 @@ export function MapPins({ onPinsChange, disabled = false, readOnly = false, onSe
                         key={shape}
                         type="button"
                         onClick={() => setDraft({ ...draft, shape })}
-                        className={`flex h-8 w-8 items-center justify-center rounded-lg border text-base ${draft.shape === shape ? 'border-white bg-surface-overlay text-white' : 'border-surface-border text-slate-300'}`}
+                        aria-pressed={draft.shape === shape}
+                        className={`flex min-h-12 items-center justify-center gap-2 rounded-full border px-3 text-sm ${draft.shape === shape ? 'border-ink bg-surface-overlay text-ink' : 'border-surface-border text-body'}`}
                         aria-label={`Elegir ${shapes[shape].label}`}
                         title={shapes[shape].label}
                       >
-                        {shapes[shape].glyph}
+                        {shapes[shape].label}
                       </button>
                     ))}
                   </div>
-                  <p className="mt-2 text-xs text-slate-300">{draft.id ? 'Arrastra el pin para moverlo' : 'Elige color y forma'}</p>
+                  <p className="mt-2 text-xs text-body">{draft.id ? 'Arrastra el pin para moverlo' : 'Elige color y forma'}</p>
                 </div>
                 <div className="flex gap-2">
                   <button type="button" onClick={() => void save()} disabled={busy || !draft.name.trim()} className="flex-1 rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-surface disabled:opacity-50">Guardar</button>
                   {draft.id && <button type="button" onClick={() => void remove()} disabled={busy} className="rounded-lg bg-accent-red px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">Eliminar</button>}
-                  <button type="button" onClick={() => setDraft(null)} className="rounded-lg border border-surface-border px-3 py-2 text-xs text-slate-300">Cerrar</button>
+                  <button type="button" onClick={() => setDraft(null)} className="rounded-lg border border-surface-border px-3 py-2 text-xs text-body">Cerrar</button>
                 </div>
               </>
             ) : (
               <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-white">{draft.name}</span>
-                <button type="button" onClick={() => setDraft(null)} className="rounded-lg border border-surface-border px-3 py-2 text-xs text-slate-300">Cerrar</button>
+                <span className="text-sm text-ink">{draft.name}</span>
+                <button type="button" onClick={() => setDraft(null)} className="rounded-lg border border-surface-border px-3 py-2 text-xs text-body">Cerrar</button>
               </div>
             )}
           </div>

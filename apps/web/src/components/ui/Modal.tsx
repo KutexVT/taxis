@@ -1,8 +1,9 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useId, useRef } from 'react';
+import { Icon } from './Icon';
 
-/** Modal centrado con fondo difuminado y animacion de entrada/salida. */
+/** Native dialog provides focus trapping, Escape and focus restoration. */
 export function Modal({
   open,
   title,
@@ -14,41 +15,29 @@ export function Modal({
   onClose: () => void;
   children: React.ReactNode;
 }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  useEffect(() => {
+    const element = dialog.current;
+    if (!element) return;
+    if (open && !element.open) element.showModal();
+    if (!open && element.open) element.close();
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previous; };
+  }, [open]);
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={onClose}
-            aria-hidden
-          />
-          <motion.div
-            className="card relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto p-6"
-            initial={{ scale: 0.95, y: 12, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.97, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">{title}</h3>
-              <button
-                onClick={onClose}
-                className="rounded-lg px-2 py-1 text-slate-400 transition hover:bg-surface-overlay hover:text-white"
-                aria-label="Cerrar"
-              >
-                ✕
-              </button>
-            </div>
-            {children}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <dialog ref={dialog} aria-labelledby={titleId} onCancel={onClose}
+      onClick={event => { if (event.target === event.currentTarget) onClose(); }}
+      className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg rounded-2xl bg-white p-0 text-body shadow-card backdrop:bg-black/50">
+      {open && <div className="p-5 sm:p-6">
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <h2 id={titleId} className="text-2xl font-bold">{title}</h2>
+          <button type="button" onClick={onClose} className="button-secondary !px-3" aria-label="Cerrar"><Icon name="close" /></button>
+        </div>
+        {children}
+      </div>}
+    </dialog>
   );
 }

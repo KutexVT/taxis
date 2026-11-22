@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
 import type { CentralAreaDTO, MapPinDTO } from '@taxi/shared';
+import { Icon } from '@/components/ui/Icon';
 
 interface Place {
   id: string;
@@ -106,7 +107,7 @@ export function MapControls({
   return (
     <div ref={controls}>
       <div
-        className="absolute left-14 right-14 top-3 z-[1000] max-w-sm"
+        className="absolute left-16 right-16 top-3 z-[1000] max-w-sm"
         onBlur={(event) => {
           if (!event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false);
         }}
@@ -120,20 +121,20 @@ export function MapControls({
           onFocus={() => setOpen(true)}
           placeholder="Buscar un lugar"
           autoComplete="off"
-          className="w-full rounded-xl border border-surface-border bg-surface/95 px-4 py-2.5 text-sm text-white shadow-card outline-none placeholder:text-slate-400 focus:border-brand"
+          className="w-full rounded-xl border border-surface-border bg-surface/95 px-4 py-2.5 text-sm text-ink shadow-card outline-none placeholder:text-muted focus:border-brand"
         />
         {open && query.trim().length >= 2 && (
           <div className="mt-1 max-h-64 overflow-y-auto rounded-xl border border-surface-border bg-surface-raised shadow-card">
-            {loading && <p className="px-4 py-3 text-sm text-slate-400">Buscando...</p>}
-            {!loading && error && pinPlaces.length === 0 && areaPlaces.length === 0 && <p className="px-4 py-3 text-sm text-red-300">No se pudo buscar</p>}
-            {!loading && !error && results.length === 0 && <p className="px-4 py-3 text-sm text-slate-400">Sin resultados</p>}
+            {loading && <p className="px-4 py-3 text-sm text-muted">Buscando...</p>}
+            {!loading && error && pinPlaces.length === 0 && areaPlaces.length === 0 && <p className="px-4 py-3 text-sm text-red-700">No se pudo buscar</p>}
+            {!loading && !error && results.length === 0 && <p className="px-4 py-3 text-sm text-muted">Sin resultados</p>}
             {results.map((place) => (
               <button
                 key={place.id}
                 type="button"
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => choose(place)}
-                className="block w-full border-b border-surface-border px-4 py-3 text-left text-sm text-slate-200 last:border-0 hover:bg-surface-overlay"
+                className="block w-full border-b border-surface-border px-4 py-3 text-left text-sm text-body last:border-0 hover:bg-surface-overlay"
               >
                 {place.label}
               </button>
@@ -145,11 +146,11 @@ export function MapControls({
       <button
         type="button"
         onClick={onToggleExpanded}
-        className="absolute right-3 top-3 z-[1000] flex h-10 w-10 items-center justify-center rounded-xl border border-surface-border bg-surface/95 text-xl text-white shadow-card hover:bg-surface-overlay"
+        className="absolute right-2 top-3 z-[1000] flex h-12 w-12 items-center justify-center rounded-full bg-white text-ink shadow-card hover:bg-surface-overlay"
         aria-label={expanded ? 'Reducir mapa' : 'Agrandar mapa'}
         title={expanded ? 'Reducir mapa' : 'Agrandar mapa'}
       >
-        {expanded ? '↙' : '↗'}
+        <Icon name={expanded ? 'close' : 'map'} />
       </button>
     </div>
   );

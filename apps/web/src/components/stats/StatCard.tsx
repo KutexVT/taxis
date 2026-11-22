@@ -1,15 +1,15 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { Icon } from '@/components/ui/Icon';
 
 const accents: Record<string, string> = {
   brand: 'text-brand',
   green: 'text-accent-green',
   blue: 'text-accent-blue',
-  amber: 'text-amber-300',
+  amber: 'text-amber-800',
   red: 'text-accent-red',
-  slate: 'text-slate-300',
+  slate: 'text-body',
 };
 
 /** Tarjeta de metrica con valor grande y etiqueta. */
@@ -29,15 +29,13 @@ export function StatCard({
   description?: string;
 }) {
   const card = (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`card h-full p-4 ${href ? 'transition hover:-translate-y-0.5 hover:border-brand/60' : ''}`}
+    <div
+      className={`h-full rounded-2xl bg-surface-overlay p-4 sm:p-5 ${href ? 'transition-colors hover:bg-neutral-200' : ''}`}
     >
-      <p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
-      <p className={`mt-1 text-3xl font-bold ${accents[accent]}`}>{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}
-    </motion.div>
+      <div className="flex items-start justify-between gap-2"><p className="text-sm text-body">{label}</p>{href && <Icon name="arrow" className="!h-4 !w-4" />}</div>
+      <p className={`mt-3 text-3xl font-bold tabular-nums ${accent === 'red' ? 'text-red-700' : 'text-ink'}`}>{value}</p>
+      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+    </div>
   );
 
   return href ? (

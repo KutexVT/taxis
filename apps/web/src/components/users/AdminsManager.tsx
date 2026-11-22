@@ -47,26 +47,26 @@ export function AdminsManager({ centrals }: { centrals: CentralDTO[] }) {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Locutores</h2>
-          <p className="text-sm text-slate-400">{data?.users.length ?? 0} administradores de central</p>
+          <h2 className="text-lg font-semibold text-ink">Locutores</h2>
+          <p className="text-sm text-muted">{data?.users.length ?? 0} administradores de central</p>
         </div>
         <PrimaryButton onClick={() => setCreating(true)} disabled={centrals.length === 0}>
           + Nuevo locutor
         </PrimaryButton>
       </div>
 
-      {loading && <p className="text-sm text-slate-400">Cargando...</p>}
-      {error && <p className="text-sm text-red-300">{error}</p>}
+      {loading && <p className="text-sm text-muted">Cargando...</p>}
+      {error && <p className="text-sm text-red-700">{error}</p>}
 
       <div className="space-y-3">
         {data?.users.map((u) => (
           <div key={u.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
             <div>
-              <div className="flex items-center gap-2">
-                <p className="font-semibold text-white">{u.fullName}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-semibold text-ink">{u.fullName}</p>
                 <Badge value={u.status} />
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 @{u.username} · {centralName(u.centralId)}
               </p>
             </div>
@@ -86,7 +86,7 @@ export function AdminsManager({ centrals }: { centrals: CentralDTO[] }) {
           </div>
         ))}
         {data && data.users.length === 0 && !loading && (
-          <p className="text-sm text-slate-400">No hay locutores registrados aun.</p>
+          <p className="text-sm text-muted">No hay locutores registrados aun.</p>
         )}
       </div>
 
@@ -167,7 +167,7 @@ function AdminFormModal({
           <TextField label="Telefono" value={f.phone} onChange={(v) => setF({ ...f, phone: v })} />
           <TextField label="Correo" value={f.email} onChange={(v) => setF({ ...f, email: v })} />
         </div>
-        {err && <p className="text-sm text-red-300">{err}</p>}
+        {err && <p className="text-sm text-red-700">{err}</p>}
         <div className="flex justify-end pt-2">
           <PrimaryButton onClick={save} disabled={busy}>
             {busy ? 'Guardando...' : 'Guardar'}

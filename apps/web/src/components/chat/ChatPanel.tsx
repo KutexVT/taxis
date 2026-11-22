@@ -8,6 +8,7 @@ import { useSocketConnection, useSocketEvent } from '@/lib/socket';
 import type { ChatContact, ChatMessageDTO } from '@/lib/types';
 import { ChatComposer } from './ChatComposer';
 import { ChatMedia } from './ChatMedia';
+import { Icon } from '@/components/ui/Icon';
 
 /** Chat 1-a-1 con historial y mensajes en tiempo real. Reutilizable por todos los roles. */
 export function ChatPanel() {
@@ -38,7 +39,8 @@ export function ChatPanel() {
   }
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = endRef.current?.parentElement;
+    if (container) container.scrollTop = container.scrollHeight;
   }, [messages]);
 
   // Mensajes entrantes/salientes en tiempo real.
@@ -71,59 +73,59 @@ export function ChatPanel() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-[260px_1fr]" style={{ height: '70vh' }}>
-      <aside className="card flex flex-col overflow-hidden p-2">
-        <p className="px-2 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Contactos
-        </p>
+    <div className="chat-layout grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[280px_minmax(0,1fr)]">
+      <aside className={`card min-h-0 flex-col overflow-hidden p-3 ${selected ? 'hidden md:flex' : 'flex'}`}>
+        <h1 className="px-2 py-3 text-2xl font-bold">Conversaciones</h1>
         <div className="flex-1 space-y-1 overflow-y-auto">
           {contacts.map((c) => (
             <button
               key={c.id}
               onClick={() => openConversation(c)}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ${
+              className={`flex min-h-16 w-full items-center justify-between gap-3 rounded-xl px-3 py-3 text-left text-sm transition-colors ${
                 selected?.id === c.id
-                  ? 'bg-brand/15 text-brand'
-                  : 'text-slate-300 hover:bg-surface-overlay'
+                  ? 'bg-surface-overlay text-ink'
+                  : 'text-body hover:bg-surface-overlay'
               }`}
             >
               <span className="min-w-0">
                 <span className="block truncate font-medium">{c.fullName}</span>
-                <span className="block text-[11px] text-slate-500">{roleLabel[c.role]}</span>
+                <span className="block text-xs text-muted">{roleLabel[c.role]}</span>
               </span>
               {c.unread > 0 && (
-                <span className="ml-2 rounded-full bg-brand px-1.5 text-[10px] font-bold text-surface">
+                <span className="ml-2 rounded-full bg-brand px-1.5 text-xs font-bold text-surface">
                   {c.unread}
                 </span>
               )}
             </button>
           ))}
           {contacts.length === 0 && (
-            <p className="px-3 py-2 text-xs text-slate-500">Sin contactos disponibles.</p>
+            <p className="px-3 py-2 text-xs text-muted">Sin contactos disponibles.</p>
           )}
         </div>
       </aside>
 
-      <section className="card flex flex-col overflow-hidden">
+      <section aria-label="Conversación" className={`card min-h-0 min-w-0 flex-col overflow-hidden ${selected ? 'flex' : 'hidden md:flex'}`}>
         {selected ? (
           <>
-            <div className="border-b border-surface-border px-4 py-3">
-              <p className="text-sm font-semibold text-white">{selected.fullName}</p>
-              <p className="text-xs text-slate-500">{roleLabel[selected.role]}</p>
+            <div className="flex shrink-0 items-center gap-3 border-b border-surface-border px-3 py-2">
+              <button type="button" className="button-secondary !px-3 md:hidden" aria-label="Volver a contactos" onClick={() => { setSelected(null); selectedRef.current = null; }}><Icon name="back" /></button>
+              <div className="min-w-0"><p className="truncate text-sm font-semibold text-ink">{selected.fullName}</p>
+              <p className="text-xs text-muted">{roleLabel[selected.role]}</p></div>
             </div>
-            <div className="flex-1 space-y-2 overflow-y-auto p-4">
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain p-4" role="log" aria-label="Mensajes">
+              {messages.length === 0 && <p className="py-5 text-center text-sm text-muted">Escribe un mensaje o envía un audio para comenzar.</p>}
               {messages.map((m) => (
                 <div key={m.id} className={`flex ${m.mine ? 'justify-end' : 'justify-start'}`}>
                   <div
-                    className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
                       m.mine
                         ? 'bg-brand text-surface'
-                        : 'bg-surface-overlay text-slate-200'
+                        : 'bg-surface-overlay text-body'
                     }`}
                   >
                     {m.attachmentName && <ChatMedia message={m} />}
                     <span className="whitespace-pre-wrap break-words">{m.body}</span>
-                    <span className={`mt-0.5 block text-[10px] ${m.mine ? 'text-surface/70' : 'text-slate-500'}`}>
+                    <span className={`mt-0.5 block text-xs ${m.mine ? 'text-surface/70' : 'text-muted'}`}>
                       {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
@@ -134,7 +136,7 @@ export function ChatPanel() {
             <ChatComposer key={selected.id} onSend={send} />
           </>
         ) : (
-          <div className="flex flex-1 items-center justify-center text-sm text-slate-500">
+          <div className="flex flex-1 items-center justify-center text-sm text-muted">
             Selecciona un contacto para chatear.
           </div>
         )}

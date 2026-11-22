@@ -49,17 +49,17 @@ export default function DespachoPage() {
         </div>
 
         <div>
-          <h3 className="mb-3 font-semibold text-white">Servicios activos ({active.length})</h3>
+          <h3 className="mb-3 font-semibold text-ink">Servicios activos ({active.length})</h3>
           <div className="space-y-3">
             {active.map((s) => (
               <div key={s.id} className="card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-white">{s.clientName}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold text-ink">{s.clientName}</p>
                       <Badge value={s.status} />
                     </div>
-                    <p className="truncate text-xs text-slate-400">
+                    <p className="break-words text-sm text-muted">
                       {s.originAddress} · {s.clientPhone}
                     </p>
                     {s.driver ? (
@@ -68,7 +68,7 @@ export default function DespachoPage() {
                         {s.distanceKm != null && <> · {s.distanceKm} km</>}
                       </p>
                     ) : (
-                      <p className="mt-1 text-xs text-amber-300">Sin asignar</p>
+                      <p className="mt-1 text-xs text-amber-800">Sin asignar</p>
                     )}
                   </div>
                   <div className="flex shrink-0 flex-col gap-2">
@@ -85,22 +85,22 @@ export default function DespachoPage() {
               </div>
             ))}
             {active.length === 0 && (
-              <p className="text-sm text-slate-400">No hay servicios activos.</p>
+              <p className="text-sm text-muted">No hay servicios activos.</p>
             )}
           </div>
 
           {history.length > 0 && (
             <>
-              <h3 className="mb-3 mt-6 font-semibold text-white">Historial reciente</h3>
+              <h3 className="mb-3 mt-6 font-semibold text-ink">Historial reciente</h3>
               <div className="space-y-2">
                 {history.map((s) => (
                   <div
                     key={s.id}
                     className="flex items-center justify-between rounded-lg border border-surface-border bg-surface-raised/60 p-3 text-sm"
                   >
-                    <span className="text-slate-300">
+                    <span className="text-body">
                       {s.clientName}
-                      {s.driver && <span className="text-slate-500"> · Taxi {s.driver.taxiNumber}</span>}
+                      {s.driver && <span className="text-muted"> · Taxi {s.driver.taxiNumber}</span>}
                     </span>
                     <Badge value={s.status} />
                   </div>

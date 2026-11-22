@@ -6,19 +6,25 @@ import { MetricsGrid } from '@/components/stats/MetricsGrid';
 import { useLiveStats } from '@/lib/useLiveStats';
 import { adminNav } from '@/lib/nav';
 import type { StatsOverview } from '@/lib/types';
+import Link from 'next/link';
+import { Icon } from '@/components/ui/Icon';
 
 export default function AdminDashboard() {
   const { data } = useLiveStats<StatsOverview>('/api/stats/overview');
 
   return (
-    <DashboardShell title="Panel Super Administrador" nav={adminNav}>
+    <DashboardShell title="Administración" nav={adminNav}>
       <div className="mb-5">
-        <h2 className="text-lg font-semibold text-white">Control global</h2>
-        <p className="text-sm text-slate-400">Metricas en tiempo real de toda la plataforma.</p>
+        <h1 className="text-3xl font-bold text-ink">Toda tu operación</h1>
+        <p className="mt-2 text-sm text-muted">Centrales, personas y viajes en un solo lugar.</p>
       </div>
-
+      <div className="mb-8 flex flex-wrap gap-3">
+        <Link href="/admin/mapa" className="button-primary"><Icon name="map" />Ver mapa global</Link>
+        <Link href="/admin/centrales" className="button-secondary"><Icon name="building" />Centrales</Link>
+        <Link href="/admin/usuarios" className="button-secondary"><Icon name="users" />Usuarios</Link>
+      </div>
       {!data ? (
-        <p className="text-sm text-slate-400">Cargando metricas...</p>
+        <p className="text-sm text-muted">Cargando metricas...</p>
       ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

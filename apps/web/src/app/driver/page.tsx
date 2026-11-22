@@ -7,15 +7,16 @@ import { driverNav } from '@/lib/nav';
 
 export default function DriverHome() {
   return (
-    <DashboardShell title="App del Taxista" nav={driverNav}>
-      <div className="mx-auto max-w-md space-y-4">
-        <GpsShare />
+    <DashboardShell title="Central de Taxi" nav={driverNav}>
+      <div className="mx-auto max-w-2xl space-y-6">
+        <h1 className="text-3xl font-bold">Tu jornada</h1>
         <div>
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
-            Mis servicios
+          <h2 className="mb-4 text-xl font-semibold text-ink">
+            Tus viajes
           </h2>
           <DriverServices />
         </div>
+        <GpsShare />
       </div>
     </DashboardShell>
   );

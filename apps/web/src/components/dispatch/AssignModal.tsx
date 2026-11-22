@@ -53,12 +53,12 @@ export function AssignModal({
   return (
     <Modal open={Boolean(service)} title="Asignar taxista" onClose={onClose}>
       {service && (
-        <p className="mb-3 text-sm text-slate-400">
+        <p className="mb-3 text-sm text-muted">
           Origen: {service.originAddress}
         </p>
       )}
-      {loading && <p className="text-sm text-slate-400">Buscando taxistas cercanos...</p>}
-      {err && <p className="text-sm text-red-300">{err}</p>}
+      {loading && <p className="text-sm text-muted">Buscando taxistas cercanos...</p>}
+      {err && <p className="text-sm text-red-700">{err}</p>}
       <div className="space-y-2">
         {drivers.map((d) => (
           <div
@@ -66,10 +66,10 @@ export function AssignModal({
             className="flex items-center justify-between rounded-lg border border-surface-border bg-surface-overlay/40 p-3"
           >
             <div>
-              <p className="text-sm font-medium text-white">
+              <p className="text-sm font-medium text-ink">
                 Taxi {d.taxiNumber} · {d.fullName}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 {d.distanceKm} km · ~{d.etaMin} min
               </p>
             </div>
@@ -83,7 +83,7 @@ export function AssignModal({
           </div>
         ))}
         {!loading && drivers.length === 0 && !err && (
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-muted">
             No hay taxistas disponibles con ubicacion cerca. Asegurate de que esten conectados y compartiendo GPS.
           </p>
         )}

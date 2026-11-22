@@ -19,16 +19,17 @@ export function TextField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-slate-400">
+      <span className="mb-1 block text-xs font-medium text-muted">
         {label}
-        {required && <span className="text-accent-red"> *</span>}
+        {required && <span className="text-muted"> *</span>}
       </span>
       <input
         type={type}
+        required={required}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-surface-border bg-surface-overlay/60 px-3 py-2 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand focus:ring-2 focus:ring-brand/20"
+        className="field"
       />
     </label>
   );
@@ -47,11 +48,11 @@ export function SelectField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-slate-400">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-muted">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-surface-border bg-surface-overlay/60 px-3 py-2 text-sm text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+        className="field"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -79,7 +80,7 @@ export function PrimaryButton({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-surface transition enabled:hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50"
+      className="button-primary"
     >
       {children}
     </button>
@@ -98,10 +99,11 @@ export function GhostButton({
   return (
     <button
       onClick={onClick}
-      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+      type="button"
+      className={`min-h-12 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
         danger
-          ? 'border-surface-border text-slate-300 hover:border-accent-red/50 hover:text-red-300'
-          : 'border-surface-border text-slate-300 hover:border-brand/50 hover:text-brand'
+          ? 'border-red-200 text-red-700 hover:bg-red-50'
+          : 'border-surface-border text-body hover:border-brand/50 hover:text-brand'
       }`}
     >
       {children}

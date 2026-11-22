@@ -82,19 +82,19 @@ export function IncidentsManager() {
 
   return (
     <div>
-      <h3 className="mb-3 font-semibold text-white">Incidentes activos ({open.length})</h3>
+      <h3 className="mb-3 font-semibold text-ink">Incidentes activos ({open.length})</h3>
       <div className="space-y-3">
         {open.map((i) => (
-          <div key={i.id} className="card border-l-4 border-l-accent-red p-4">
+          <div key={i.id} className="rounded-2xl border border-red-200 bg-red-50 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold text-white">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-semibold text-ink">
                     Taxi {i.taxiNumber} · {i.fullName}
                   </p>
                   <Badge value={i.status} />
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   {new Date(i.createdAt).toLocaleString()} · {i.lat.toFixed(5)}, {i.lng.toFixed(5)}
                 </p>
               </div>
@@ -103,7 +103,7 @@ export function IncidentsManager() {
                   href={`https://www.openstreetmap.org/?mlat=${i.lat}&mlon=${i.lng}#map=17/${i.lat}/${i.lng}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg border border-surface-border px-3 py-1.5 text-xs text-slate-300"
+                  className="button-secondary"
                 >
                   Ver mapa
                 </a>
@@ -117,22 +117,22 @@ export function IncidentsManager() {
             </div>
           </div>
         ))}
-        {open.length === 0 && <p className="text-sm text-slate-400">Sin incidentes activos.</p>}
+        {open.length === 0 && <p className="text-sm text-muted">Sin incidentes activos.</p>}
       </div>
 
       {closed.length > 0 && (
         <>
-          <h3 className="mb-3 mt-6 font-semibold text-white">Historial</h3>
+          <h3 className="mb-3 mt-6 font-semibold text-ink">Historial</h3>
           <div className="space-y-2">
             {closed.map((i) => (
               <div
                 key={i.id}
                 className="flex items-center justify-between rounded-lg border border-surface-border bg-surface-raised/60 p-3 text-sm"
               >
-                <span className="text-slate-300">
+                <span className="text-body">
                   Taxi {i.taxiNumber} · {i.fullName}
                 </span>
-                <span className="text-xs text-slate-500">{sosLabel[i.status]}</span>
+                <span className="text-xs text-muted">{sosLabel[i.status]}</span>
               </div>
             ))}
           </div>

@@ -54,27 +54,27 @@ export function DriversManager({ centrals }: { centrals: CentralDTO[] | null }) 
     <div>
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Taxistas</h2>
-          <p className="text-sm text-slate-400">{data?.users.length ?? 0} registrados</p>
+          <h2 className="text-lg font-semibold text-ink">Taxistas</h2>
+          <p className="text-sm text-muted">{data?.users.length ?? 0} registrados</p>
         </div>
         <PrimaryButton onClick={() => setCreating(true)} disabled={centrals !== null && centrals.length === 0}>
           + Nuevo taxista
         </PrimaryButton>
       </div>
 
-      {loading && <p className="text-sm text-slate-400">Cargando...</p>}
-      {error && <p className="text-sm text-red-300">{error}</p>}
+      {loading && <p className="text-sm text-muted">Cargando...</p>}
+      {error && <p className="text-sm text-red-700">{error}</p>}
 
       <div className="space-y-3">
         {data?.users.map((u) => (
           <div key={u.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="font-semibold text-white">{u.fullName}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-semibold text-ink">{u.fullName}</p>
                 <Badge value={u.status} />
                 {u.driverProfile && <Badge value={u.driverProfile.currentStatus} />}
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 @{u.username}
                 {u.driverProfile && (
                   <>
@@ -88,13 +88,13 @@ export function DriversManager({ centrals }: { centrals: CentralDTO[] | null }) 
             <div className="flex flex-wrap gap-2">
               <GhostButton onClick={() => setEditing(u)}>Editar</GhostButton>
               {u.status === UserStatus.BANNED ? (
-                <GhostButton onClick={() => act(u, 'unban')}>Desbanear</GhostButton>
+                <GhostButton onClick={() => act(u, 'unban')}>Desbloquear</GhostButton>
               ) : (
                 <GhostButton danger onClick={() => act(u, 'ban')}>
-                  Banear
+                  Bloquear
                 </GhostButton>
               )}
-              <GhostButton onClick={() => act(u, 'reset')}>Reset clave</GhostButton>
+              <GhostButton onClick={() => act(u, 'reset')}>Cambiar contraseña</GhostButton>
               <GhostButton danger onClick={() => act(u, 'delete')}>
                 Eliminar
               </GhostButton>
@@ -102,7 +102,7 @@ export function DriversManager({ centrals }: { centrals: CentralDTO[] | null }) 
           </div>
         ))}
         {data && data.users.length === 0 && !loading && (
-          <p className="text-sm text-slate-400">No hay taxistas registrados aun.</p>
+          <p className="text-sm text-muted">No hay taxistas registrados aun.</p>
         )}
       </div>
 

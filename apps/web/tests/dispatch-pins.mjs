@@ -67,8 +67,8 @@ try {
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${artifacts}/${name}-dispatch.png`, fullPage: true });
     await page.getByLabel(/^Cliente/).fill('Cliente de prueba');
-    await page.getByLabel(/^Telefono/).fill('88888888');
-    await page.getByLabel(/^Direccion de origen/).fill('Parada de prueba');
+    await page.getByLabel(/^Teléfono/).fill('88888888');
+    await page.getByLabel(/^Dirección de origen/).fill('Parada de prueba');
     await page.getByRole('button', { name: 'Crear servicio', exact: true }).click();
     await page.waitForTimeout(150);
     assert.equal(service?.originLat, pins[1].lat);

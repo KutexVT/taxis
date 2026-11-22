@@ -108,71 +108,75 @@ export function AuditTable() {
 
   return (
     <div>
-      <div className="mb-4 flex gap-2 overflow-x-auto pb-1" aria-label="Secciones del historial">
+      <div className="mb-4 flex flex-wrap gap-2 pb-1" aria-label="Secciones del historial">
         {sections.map((item) => (
-          <button key={item.id} type="button" onClick={() => { setOffset(0); setAction(''); setSection(item.id); }} className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition ${section === item.id ? 'bg-brand text-surface' : 'border border-surface-border text-slate-300 hover:bg-surface-overlay'}`}>
+          <button key={item.id} type="button" aria-pressed={section === item.id} onClick={() => { setOffset(0); setAction(''); setSection(item.id); }} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors ${section === item.id ? 'bg-brand text-surface' : 'border border-surface-border text-body hover:bg-surface-overlay'}`}>
             {item.label}
           </button>
         ))}
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label className="text-xs text-slate-400">
+      <details className="mb-5 rounded-2xl bg-surface-overlay p-4">
+        <summary className="cursor-pointer py-3 font-medium text-ink">Filtrar por usuario, actividad o fecha{actorId || action || from || to ? ' · Filtros aplicados' : ''}</summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label className="text-xs text-muted">
           Usuario
-          <select value={actorId} onChange={(event) => { setOffset(0); setActorId(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-white outline-none focus:border-brand">
+          <select value={actorId} onChange={(event) => { setOffset(0); setActorId(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-ink outline-none focus:border-brand">
             <option value="">Todos los usuarios</option>
             {actors.map((actor) => <option key={actor.id} value={actor.id}>{actor.fullName} · {roleLabel[actor.role]}</option>)}
           </select>
         </label>
-        <label className="text-xs text-slate-400">
+        <label className="text-xs text-muted">
           Tipo de actividad
-          <select value={action} onChange={(event) => { setOffset(0); setSection('all'); setAction(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-white outline-none focus:border-brand">
+          <select value={action} onChange={(event) => { setOffset(0); setSection('all'); setAction(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-ink outline-none focus:border-brand">
             <option value="">Todas las actividades</option>
             {Object.entries(actionLabel).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </label>
-        <label className="text-xs text-slate-400">
+        <label className="text-xs text-muted">
           Desde
-          <input type="date" value={from} onChange={(event) => { setOffset(0); setFrom(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-white outline-none focus:border-brand" />
+          <input type="date" value={from} onChange={(event) => { setOffset(0); setFrom(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-ink outline-none focus:border-brand" />
         </label>
-        <label className="text-xs text-slate-400">
+        <label className="text-xs text-muted">
           Hasta
-          <input type="date" value={to} onChange={(event) => { setOffset(0); setTo(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-white outline-none focus:border-brand" />
+          <input type="date" value={to} onChange={(event) => { setOffset(0); setTo(event.target.value); }} className="mt-1 block w-full rounded-lg border border-surface-border bg-surface-overlay px-3 py-2 text-sm text-ink outline-none focus:border-brand" />
         </label>
-      </div>
+        </div>
+        <button type="button" className="mt-4 min-h-12 rounded-full border border-surface-border bg-white px-4" onClick={() => { setActorId(''); setAction(''); setFrom(''); setTo(''); setOffset(0); }}>Limpiar filtros</button>
+      </details>
 
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[1050px] text-left text-sm">
-          <thead className="border-b border-surface-border text-xs uppercase text-slate-500">
+        <table className="audit-table w-full min-w-[1050px] text-left text-sm">
+          <thead className="border-b border-surface-border text-xs uppercase text-muted">
             <tr><th className="px-4 py-2">Fecha</th><th className="px-4 py-2">Usuario</th><th className="px-4 py-2">Actividad</th><th className="px-4 py-2">Información completa</th><th className="px-4 py-2">Conexión</th></tr>
           </thead>
           <tbody>
             {logs.map((log) => (
               <tr key={log.id} className="border-b border-surface-border/50 align-top">
-                <td className="whitespace-nowrap px-4 py-3 text-slate-400">{new Date(log.createdAt).toLocaleString()}</td>
-                <td className="px-4 py-3 text-slate-200">
-                  {log.actor ? <>{log.actor.fullName}<span className="block text-xs text-slate-500">@{log.actor.username} · {roleLabel[log.actor.role]}</span></> : <span className="text-slate-500">Sistema</span>}
+                <td data-label="Fecha" className="whitespace-nowrap px-4 py-3 text-muted">{new Date(log.createdAt).toLocaleString()}</td>
+                <td data-label="Usuario" className="px-4 py-3 text-body">
+                  {log.actor ? <>{log.actor.fullName}<span className="block text-xs text-muted">@{log.actor.username} · {roleLabel[log.actor.role]}</span></> : <span className="text-muted">Sistema</span>}
                 </td>
-                <td className="px-4 py-3 text-white">
+                <td data-label="Actividad" className="px-4 py-3 text-ink">
                   {actionLabel[log.action] ?? log.action}
-                  {log.entityType && <span className="mt-1 block text-xs text-slate-500">{log.entityType} · {log.entityId}</span>}
+                  {log.entityType && <span className="mt-1 block text-xs text-muted">{log.entityType} · {log.entityId}</span>}
                 </td>
-                <td className="max-w-md px-4 py-3 text-xs text-slate-300">
+                <td data-label="Información completa" className="max-w-md px-4 py-3 text-xs text-body">
                   {log.metadata && Object.entries(log.metadata).length > 0 ? (
                     <dl className="space-y-1">
-                      {Object.entries(log.metadata).map(([key, value]) => <div key={key} className="grid grid-cols-[120px_1fr] gap-2"><dt className="text-slate-500">{detailLabel[key] ?? key}</dt><dd className="break-words">{detailValue(value)}</dd></div>)}
+                      {Object.entries(log.metadata).map(([key, value]) => <div key={key} className="grid grid-cols-[120px_1fr] gap-2"><dt className="text-muted">{detailLabel[key] ?? key}</dt><dd className="break-words">{detailValue(value)}</dd></div>)}
                     </dl>
                   ) : 'Sin detalles adicionales'}
                 </td>
-                <td className="max-w-xs px-4 py-3 text-xs text-slate-500"><span className="block">IP {log.ip ?? '—'}</span><span className="mt-1 block break-words">{log.userAgent ?? 'Dispositivo no disponible'}</span></td>
+                <td data-label="Conexión" className="max-w-xs px-4 py-3 text-xs text-muted"><span className="block">IP {log.ip ?? '—'}</span><span className="mt-1 block break-words">{log.userAgent ?? 'Dispositivo no disponible'}</span></td>
               </tr>
             ))}
-            {logs.length === 0 && <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-500">Sin registros para los filtros indicados</td></tr>}
+            {logs.length === 0 && <tr><td colSpan={5} className="px-4 py-8 text-center text-muted">Sin registros para los filtros indicados</td></tr>}
           </tbody>
         </table>
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-sm text-slate-400">
+      <div className="mt-3 flex items-center justify-between text-sm text-muted">
         <span>{total} registros</span>
         <div className="flex gap-2">
           <button disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - PAGE))} className="rounded-lg border border-surface-border px-3 py-1.5 disabled:opacity-40">Anterior</button>

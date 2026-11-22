@@ -27,3 +27,6 @@ prisma/*.db
 coverage/
 .turbo/
 *.tsbuildinfo
+
+# Local visual evidence and reports
+.impeccable/review/

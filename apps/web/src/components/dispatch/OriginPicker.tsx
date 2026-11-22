@@ -13,7 +13,7 @@ const DEFAULT_CENTER: [number, number] = [10.0919563, -84.7306073];
 
 const pin = L.divIcon({
   className: 'origin-pin',
-  html: `<div style="width:18px;height:18px;border-radius:50%;background:#f5b301;border:3px solid #0b0f14;box-shadow:0 0 0 3px rgba(245,179,1,.4)"></div>`,
+  html: `<div style="width:18px;height:18px;border-radius:50%;background:#000;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`,
   iconSize: [18, 18],
   iconAnchor: [9, 9],
 });
@@ -43,7 +43,7 @@ export function OriginPicker({
       {expanded && <div className="fixed inset-0 z-40 bg-black/75" aria-hidden />}
       <div
         className={`overflow-hidden rounded-lg border border-surface-border ${expanded ? 'fixed inset-4 z-50' : ''}`}
-        style={{ height: expanded ? 'auto' : 220 }}
+        style={{ height: expanded ? 'auto' : 300 }}
       >
         <MapCanvas
           center={value ? [value.lat, value.lng] : DEFAULT_CENTER}

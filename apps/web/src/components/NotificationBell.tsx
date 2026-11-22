@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { SocketEvent } from '@taxi/shared';
 import { useAuth } from '@/store/auth';
 import { useSocketConnection, useSocketEvent } from '@/lib/socket';
 import type { NotificationDTO } from '@/lib/types';
+import { Icon } from '@/components/ui/Icon';
+import { Modal } from '@/components/ui/Modal';
 
 const typeText: Record<string, string> = {
   'service.new': 'Nuevo servicio registrado',
@@ -50,33 +51,22 @@ export function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="relative rounded-lg border border-surface-border px-3 py-1.5 text-sm text-slate-300 transition hover:text-white"
+        className="relative flex h-12 w-12 items-center justify-center rounded-full bg-surface-overlay text-ink hover:bg-neutral-200"
         aria-label="Notificaciones"
+        aria-expanded={open}
       >
-        🔔
+        <Icon name="bell" />
         {unread > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-red px-1 text-[10px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-red px-1 text-xs font-bold text-white">
             {unread}
           </span>
         )}
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} aria-hidden />
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              className="card absolute right-0 z-40 mt-2 max-h-96 w-80 overflow-y-auto p-2"
-            >
+      <Modal open={open} onClose={() => setOpen(false)} title="Notificaciones">
               <div className="flex items-center justify-between px-2 py-1">
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  Notificaciones
-                </span>
                 {unread > 0 && (
-                  <button onClick={markAll} className="text-[11px] text-brand hover:underline">
+                  <button onClick={markAll} className="text-xs text-brand hover:underline">
                     Marcar leidas
                   </button>
                 )}
@@ -86,23 +76,20 @@ export function NotificationBell() {
                   <div
                     key={n.id}
                     className={`rounded-lg px-3 py-2 text-sm ${
-                      n.readAt ? 'text-slate-400' : 'bg-surface-overlay/60 text-white'
+                      n.readAt ? 'text-muted' : 'bg-surface-overlay/60 text-ink'
                     }`}
                   >
                     <p>{describe(n)}</p>
-                    <p className="text-[10px] text-slate-500">
+                    <p className="text-xs text-muted">
                       {new Date(n.createdAt).toLocaleString()}
                     </p>
                   </div>
                 ))}
                 {items.length === 0 && (
-                  <p className="px-3 py-4 text-center text-xs text-slate-500">Sin notificaciones.</p>
+                  <p className="px-3 py-4 text-center text-xs text-muted">Sin notificaciones.</p>
                 )}
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      </Modal>
     </div>
   );
 }

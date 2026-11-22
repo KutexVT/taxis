@@ -162,7 +162,7 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
     <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
       {expanded && <div className="fixed inset-0 z-40 bg-black/75" aria-hidden />}
       <div
-        className={`card overflow-hidden ${expanded ? 'fixed inset-4 z-50' : ''}`}
+        className={`card overflow-hidden ${expanded ? 'fixed inset-4 z-50' : 'relative'}`}
         style={{ height: expanded ? 'auto' : '70vh' }}
       >
         <MapCanvas center={center}>
@@ -195,25 +195,25 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
       </div>
 
       <aside className="card flex flex-col p-4" style={{ maxHeight: '70vh' }}>
-        {(presence.error || fleetError) && <div role="alert" className="mb-3 text-sm text-red-300">
+        {(presence.error || fleetError) && <div role="alert" className="mb-3 text-sm text-red-700">
           {presence.error || fleetError}
           <button type="button" className="ml-2 min-h-11 underline" onClick={() => { void presence.refresh(); if (!driverView) void refetch(); }}>Reintentar</button>
         </div>}
         <div className="mb-4 max-h-64 shrink-0 space-y-2 overflow-y-auto border-b border-surface-border pb-4">
-          <h3 className="text-sm font-semibold text-white">Zonas de central</h3>
+          <h3 className="text-sm font-semibold text-ink">Zonas de central</h3>
           {presence.areas.map(area => {
             const occupants = presence.taxis.filter(taxi => taxi.areaIds.includes(area.id));
             return <details key={area.id} className="text-sm">
-              <summary className="min-h-11 cursor-pointer py-3 text-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">{area.name} <span className="text-slate-400">· {occupants.length} {occupants.length === 1 ? 'taxi' : 'taxis'}</span></summary>
-              {occupants.length ? <ul className="space-y-2 pb-2 pl-3">{occupants.map(taxi => <li key={taxi.driverId}>Taxi {taxi.taxiNumber}<span className="block text-xs text-slate-400">{taxi.fullName}</span></li>)}</ul> : <p className="pb-2 text-xs text-slate-400">Sin taxis presentes</p>}
-              {owner && <button type="button" className="mb-2 min-h-11 rounded-lg border border-surface-border px-3 py-2 text-xs text-slate-200 hover:bg-surface-overlay focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand" onClick={() => setSelectedArea(area)}>Editar {area.name}</button>}
+              <summary className="min-h-11 cursor-pointer py-3 text-body focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">{area.name} <span className="text-muted">· {occupants.length} {occupants.length === 1 ? 'taxi' : 'taxis'}</span></summary>
+              {occupants.length ? <ul className="space-y-2 pb-2 pl-3">{occupants.map(taxi => <li key={taxi.driverId}>Taxi {taxi.taxiNumber}<span className="block text-xs text-muted">{taxi.fullName}</span></li>)}</ul> : <p className="pb-2 text-xs text-muted">Sin taxis presentes</p>}
+              {owner && <button type="button" className="mb-2 min-h-11 rounded-lg border border-surface-border px-3 py-2 text-xs text-body hover:bg-surface-overlay focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand" onClick={() => setSelectedArea(area)}>Editar {area.name}</button>}
             </details>;
           })}
-          {!presence.areas.length && !presence.error && <p className="text-sm text-slate-400">Todavía no hay zonas creadas para esta vista</p>}
+          {!presence.areas.length && !presence.error && <p className="text-sm text-muted">Todavía no hay zonas creadas para esta vista</p>}
         </div>
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white">{driverView ? 'Taxis en centrales' : 'Flota'}</h3>
-          <span className="text-xs text-slate-400">
+          <h3 className="text-sm font-semibold text-ink">{driverView ? 'Taxis en centrales' : 'Flota'}</h3>
+          <span className="text-xs text-muted">
             {online.length} en linea · {offline.length} fuera
           </span>
         </div>
@@ -221,27 +221,27 @@ export function LiveMap({ fetchPath }: { fetchPath: string }) {
           {online.map((d) => (
             <div key={d.driverId} className="rounded-lg border border-surface-border bg-surface-overlay/40 p-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-white">Taxi {d.taxiNumber}</span>
+                <span className="text-sm font-medium text-ink">Taxi {d.taxiNumber}</span>
                 <Badge value={d.status} />
               </div>
-              <p className="text-xs text-slate-400">{d.fullName}</p>
+              <p className="text-xs text-muted">{d.fullName}</p>
               {areaNames(d.driverId) && <p className="mt-1 text-xs text-brand">En central: {areaNames(d.driverId)}</p>}
             </div>
           ))}
           {offline.length > 0 && (
-            <p className="pt-2 text-[11px] uppercase tracking-wide text-slate-500">Desconectados</p>
+            <p className="pt-2 text-xs  text-muted">Desconectados</p>
           )}
           {offline.map((d) => (
             <div key={d.driverId} className="rounded-lg border border-surface-border bg-surface/40 p-2 opacity-60">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-300">Taxi {d.taxiNumber}</span>
+                <span className="text-sm font-medium text-body">Taxi {d.taxiNumber}</span>
                 <Badge value={DriverStatus.OFFLINE} />
               </div>
-              <p className="text-xs text-slate-500">{d.fullName}</p>
+              <p className="text-xs text-muted">{d.fullName}</p>
             </div>
           ))}
           {list.length === 0 && (
-            <p className="text-sm text-slate-400">{driverView ? 'No hay taxis presentes en las centrales.' : 'Sin taxistas registrados.'}</p>
+            <p className="text-sm text-muted">{driverView ? 'No hay taxis presentes en las centrales.' : 'Sin taxistas registrados.'}</p>
           )}
         </div>
       </aside>

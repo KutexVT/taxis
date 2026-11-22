@@ -109,7 +109,7 @@ export function DriverFormModal({
         </div>
 
         <div className="mt-2 rounded-lg border border-surface-border bg-surface-overlay/40 p-3">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Vehiculo</p>
+          <p className="mb-2 text-xs font-semibold  text-muted">Vehiculo</p>
           <div className="grid grid-cols-2 gap-3">
             <TextField label="Documento" value={f.documentId} onChange={(v) => set('documentId', v)} required />
             <TextField label="N. de taxi" value={f.taxiNumber} onChange={(v) => set('taxiNumber', v)} required />
@@ -120,7 +120,7 @@ export function DriverFormModal({
           </div>
         </div>
 
-        {err && <p className="text-sm text-red-300">{err}</p>}
+        {err && <p className="text-sm text-red-700">{err}</p>}
         <div className="flex justify-end pt-2">
           <PrimaryButton onClick={save} disabled={busy}>
             {busy ? 'Guardando...' : 'Guardar'}

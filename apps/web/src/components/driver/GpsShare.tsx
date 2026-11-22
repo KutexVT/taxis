@@ -97,16 +97,14 @@ export function GpsShare() {
   const gps = useContext(GpsContext);
   if (!gps) return null;
   return (
-    <div className="card p-6 text-center">
-      <h2 className="text-lg font-semibold text-white">{gps.sharing ? 'Compartiendo ubicación' : 'Ubicación desactivada'}</h2>
-      <p className="mt-1 text-sm text-slate-400">{gps.sharing
+    <div className="rounded-2xl bg-surface-overlay p-5 sm:p-6">
+      <h2 className="text-lg font-semibold text-ink">{gps.sharing ? 'Compartiendo ubicación' : 'Ubicación desactivada'}</h2>
+      <p className="mt-1 text-sm text-muted">{gps.sharing
         ? 'Tu ubicación y presencia en centrales se actualizan automáticamente.'
         : 'Activa el GPS para aparecer en el mapa de tu empresa.'}</p>
-      {gps.fix && <p className="mt-3 text-xs text-slate-400">{gps.fix.lat.toFixed(5)}, {gps.fix.lng.toFixed(5)} · {((gps.fix.speed ?? 0) * 3.6).toFixed(0)} km/h</p>}
-      {gps.error && <p role="alert" className="mt-3 text-sm text-red-300">{gps.error}</p>}
-      <button type="button" onClick={gps.toggle} className={`mt-5 min-h-11 w-full rounded-xl px-4 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand ${gps.sharing
-        ? 'border border-surface-border text-slate-200 hover:bg-surface-overlay'
-        : 'bg-accent-green text-surface hover:opacity-90'}`}>{gps.sharing ? 'Detener GPS' : 'Compartir GPS'}</button>
+      {gps.fix && <details className="mt-3 text-xs text-muted"><summary>Ver datos de ubicación</summary><p>{gps.fix.lat.toFixed(5)}, {gps.fix.lng.toFixed(5)} · {((gps.fix.speed ?? 0) * 3.6).toFixed(0)} km/h</p></details>}
+      {gps.error && <p role="alert" className="mt-3 text-sm text-red-700">{gps.error}</p>}
+      <button type="button" onClick={gps.toggle} aria-pressed={gps.sharing} className={`mt-5 w-full ${gps.sharing ? 'button-secondary border border-surface-border' : 'button-primary'}`}>{gps.sharing ? 'Dejar de compartir ubicación' : 'Activar mi ubicación'}</button>
     </div>
   );
 }

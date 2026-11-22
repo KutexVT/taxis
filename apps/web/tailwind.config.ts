@@ -1,9 +1,5 @@
 import type { Config } from 'tailwindcss';
 
-/**
- * Tema oscuro premium inspirado en centros de monitoreo (Uber Fleet / Tesla).
- * Paleta de acento ambar (taxi) sobre superficies grafito.
- */
 const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
   darkMode: 'class',
@@ -11,33 +7,36 @@ const config: Config = {
     extend: {
       colors: {
         surface: {
-          DEFAULT: '#0b0f14',
-          raised: '#111721',
-          overlay: '#1a2230',
-          border: '#222c3a',
+          DEFAULT: '#ffffff',
+          raised: '#ffffff',
+          overlay: '#f3f3f3',
+          border: '#dedede',
         },
         brand: {
-          DEFAULT: '#f5b301',
-          soft: '#ffd34d',
-          dark: '#c98f00',
+          DEFAULT: '#000000',
+          soft: '#282828',
+          dark: '#000000',
         },
         accent: {
-          green: '#22c55e',
-          blue: '#3b82f6',
-          red: '#ef4444',
-          amber: '#f59e0b',
+          green: '#166534',
+          blue: '#1d4ed8',
+          red: '#b91c1c',
+          amber: '#92400e',
         },
+        ink: '#000000',
+        body: '#333333',
+        muted: '#5e5e5e',
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
+      fontSize: { xs: ['0.875rem', '1.25rem'], sm: ['1rem', '1.5rem'] },
       boxShadow: {
-        card: '0 8px 30px rgba(0,0,0,0.35)',
-        glow: '0 0 20px rgba(245,179,1,0.25)',
+        card: '0 4px 16px rgba(0,0,0,0.12)',
       },
       borderRadius: {
-        xl: '0.9rem',
-        '2xl': '1.25rem',
+        xl: '0.75rem',
+        '2xl': '1rem',
       },
       keyframes: {
         'pulse-ring': {

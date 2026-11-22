@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'App de taxista: GPS, servicios y SOS en tiempo real.',
     start_url: '/driver',
     display: 'standalone',
-    background_color: '#0b0f14',
-    theme_color: '#0b0f14',
+    background_color: '#ffffff',
+    theme_color: '#ffffff',
     orientation: 'portrait',
     icons: [
       { src: '/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },

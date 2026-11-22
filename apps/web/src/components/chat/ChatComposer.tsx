@@ -64,10 +64,10 @@ export function ChatComposer({ onSend }: { onSend: (body: string, file?: File) =
     catch { if (mounted.current) setError('No se pudo enviar · Puedes intentarlo otra vez'); }
     finally { if (mounted.current) setBusy(false); }
   }
-  const small = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-surface-raised hover:text-brand disabled:opacity-40';
-  return <div className="border-t border-surface-border p-3">
-    {error && <p role="alert" className="mb-2 text-xs text-red-300">{error}</p>}
-    {file && <div className="mb-3 rounded-xl bg-surface-overlay p-3 text-slate-200">
+  const small = 'flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-muted hover:bg-surface-raised hover:text-brand disabled:opacity-40';
+  return <div className="shrink-0 border-t border-surface-border p-2 sm:p-3">
+    {error && <p role="alert" className="mb-2 text-xs text-red-700">{error}</p>}
+    {file && <div className="mb-3 rounded-xl bg-surface-overlay p-3 text-body">
       <div className="mb-2 flex items-center justify-between gap-2 text-xs"><span className="truncate">{file.name} · {(file.size / 1024 / 1024).toFixed(1)} MB</span><button disabled={busy} onClick={() => setFile(undefined)} aria-label="Quitar adjunto">✕</button></div>
       {file.type.startsWith('audio/') && <audio controls src={preview} className="max-w-full" />}
       {file.type.startsWith('image/') && <img src={preview} alt="Vista previa" className="max-h-36 rounded-lg" />}
@@ -75,13 +75,13 @@ export function ChatComposer({ onSend }: { onSend: (body: string, file?: File) =
     </div>}
     <input ref={attachment} type="file" accept={accept} className="hidden" onChange={(e) => { choose(e.target.files?.[0]); e.target.value = ''; }} />
     <input ref={camera} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="hidden" onChange={(e) => { choose(e.target.files?.[0]); e.target.value = ''; }} />
-    {recording ? <div className="flex items-center gap-3 rounded-full bg-surface-overlay px-4 py-2 text-sm text-white">
-      <span className="animate-pulse text-red-400">●</span><span role="status" className="flex-1">Grabando {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
+    {recording ? <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-surface-overlay px-3 py-2 text-sm text-ink">
+      <span className="animate-pulse text-red-700">●</span><span role="status" className="flex-1">Grabando {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
       <button onClick={() => { if (recorder.current) recorder.current.onstop = null; recorder.current?.stop(); stream.current?.getTracks().forEach((track) => track.stop()); setRecording(false); }}>Cancelar</button>
       <button onClick={() => recorder.current?.stop()} className="rounded-full bg-brand px-3 py-2 text-surface">Detener</button>
     </div> : <div className="flex items-end gap-2">
-      <div className="flex min-w-0 flex-1 items-end rounded-[28px] border border-surface-border bg-surface-overlay px-2 py-1">
-        <textarea aria-label="Mensaje" placeholder="Mensaje" value={text} maxLength={2000} rows={1} disabled={busy} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send(); } }} className="max-h-32 min-w-0 flex-1 resize-y bg-transparent px-3 py-3 text-sm text-white outline-none" />
+      <div className="flex min-w-0 flex-1 items-end rounded-[28px] border border-surface-border bg-surface-overlay px-2 py-1 focus-within:ring-2 focus-within:ring-ink">
+        <textarea aria-label="Mensaje" placeholder="Mensaje" value={text} maxLength={2000} rows={1} disabled={busy} onChange={(e) => { setText(e.target.value); e.target.style.height = 'auto'; e.target.style.height = `${Math.min(e.target.scrollHeight, 128)}px`; }} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send(); } }} className="max-h-32 min-w-0 flex-1 resize-none bg-transparent px-3 py-3 text-sm text-ink outline-none" />
         <button type="button" title="Adjuntar archivo" aria-label="Adjuntar archivo" disabled={busy} onClick={() => attachment.current?.click()} className={small}><Icon name="clip" /></button>
         <button type="button" title="Cámara" aria-label="Cámara" disabled={busy} onClick={() => camera.current?.click()} className={small}><Icon name="camera" /></button>
       </div>

@@ -22,8 +22,8 @@ mobile.setDefaultTimeout(15000);
 async function login(tab, username) {
   await tab.goto('http://localhost:3109/login');
   await tab.getByLabel('Usuario', { exact: true }).fill(username);
-  await tab.getByLabel('Contrasena', { exact: true }).fill('AreaTest123!');
-  await tab.getByRole('button', { name: 'Iniciar sesion' }).click();
+  await tab.getByLabel('Contraseña', { exact: false }).fill('AreaTest123!');
+  await tab.getByRole('button', { name: 'Entrar', exact: true }).click();
   await tab.getByRole('link', { name: 'Mapa', exact: true }).waitFor();
 }
 async function capture(tab, filename) {
@@ -70,7 +70,7 @@ try {
   await capture(page, 'desktop');
 
   await login(mobile, 'area-driver');
-  await mobile.getByRole('button', { name: 'Compartir GPS', exact: true }).click();
+  await mobile.getByRole('button', { name: 'Activar mi ubicación', exact: true }).click();
   await mobile.getByRole('heading', { name: 'Compartiendo ubicación', exact: true }).waitFor();
   await mobile.getByRole('link', { name: 'Mapa', exact: true }).click();
   await mobile.locator('.leaflet-tooltip').filter({ hasText: 'Central Centro' }).waitFor();
@@ -92,7 +92,7 @@ try {
   await mobile.getByRole('link', { name: 'Mapa', exact: true }).click();
   await mobile.getByText(/^En central: Central Centro/).waitFor();
   await mobile.getByRole('link', { name: 'Inicio', exact: true }).click();
-  await mobile.getByRole('button', { name: 'Detener GPS', exact: true }).click();
+  await mobile.getByRole('button', { name: 'Dejar de compartir ubicación', exact: true }).click();
   await mobile.getByRole('link', { name: 'Mapa', exact: true }).click();
   await mobile.getByText('No hay taxis presentes en las centrales.', { exact: true }).waitFor();
   await capture(mobile, 'mobile-stopped');

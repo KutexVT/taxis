@@ -1,12 +1,13 @@
 'use client';
 
 import { ServiceStatus } from '@taxi/shared';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/Badge';
 import { useLiveServices } from '@/lib/useLiveServices';
 import { useAuth } from '@/store/auth';
 import { ApiError } from '@/lib/api';
 import type { ServiceDTO } from '@/lib/types';
+import { Icon } from '@/components/ui/Icon';
 
 const ACTIVE: ServiceStatus[] = [
   ServiceStatus.ASSIGNED,
@@ -32,8 +33,13 @@ export function DriverServices() {
   const { services, refetch } = useLiveServices('/api/services');
   const authFetch = useAuth((s) => s.authFetch);
   const active = services.filter((s) => ACTIVE.includes(s.status));
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   async function call(s: ServiceDTO, path: string, body?: object) {
+    if (busy) return;
+    setBusy(s.id);
+    setError('');
     try {
       await authFetch(`/api/services/${s.id}/${path}`, {
         method: 'POST',
@@ -41,47 +47,54 @@ export function DriverServices() {
       });
       await refetch();
     } catch (e) {
-      alert(e instanceof ApiError ? e.message : 'Accion fallida');
+      setError(e instanceof ApiError ? e.message : 'No se pudo actualizar el viaje. Inténtalo de nuevo.');
+    } finally {
+      setBusy(null);
     }
   }
 
   if (active.length === 0) {
     return (
-      <div className="card p-5 text-center text-sm text-slate-400">
-        No tienes servicios activos.
+      <div className="empty-state">
+        <Icon name="car" className="mx-auto mb-3 !h-9 !w-9 text-ink" />
+        <p className="text-lg font-semibold text-ink">No tienes viajes activos</p>
+        <p className="mt-2">Cuando te asignen un viaje aparecerá aquí.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-3">
+      {error && <p role="alert" className="rounded-xl bg-red-50 p-4 text-red-700">{error}</p>}
       {active.map((s) => (
-        <motion.div
+        <article
           key={s.id}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
           className="card p-5"
         >
-          <div className="flex items-center justify-between">
-            <p className="font-semibold text-white">{s.clientName}</p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-xl font-semibold text-ink">{s.clientName}</h3>
             <Badge value={s.status} />
           </div>
-          <p className="mt-1 text-sm text-slate-400">{s.originAddress}</p>
-          {s.destAddress && <p className="text-xs text-slate-500">Destino: {s.destAddress}</p>}
-          <p className="text-xs text-slate-500">Tel: {s.clientPhone}</p>
-          {s.notes && <p className="mt-1 text-xs text-slate-400">Nota: {s.notes}</p>}
+          <div className="my-5 space-y-4">
+            <div className="flex gap-3"><Icon name="location" /><div><p className="text-xs text-muted">Recoger en</p><p className="mt-1 text-lg font-medium text-ink">{s.originAddress}</p></div></div>
+            {s.destAddress && <div className="flex gap-3"><Icon name="map" /><div><p className="text-xs text-muted">Destino</p><p className="mt-1 text-lg font-medium text-ink">{s.destAddress}</p></div></div>}
+          </div>
+          <a className="button-secondary" href={`tel:${s.clientPhone}`}><Icon name="phone" />{s.clientPhone}</a>
+          {s.notes && <p className="mt-4 rounded-xl bg-surface-overlay p-3 text-sm text-body">Nota: {s.notes}</p>}
 
           {s.status === ServiceStatus.ASSIGNED ? (
             <div className="mt-4 grid grid-cols-2 gap-3">
               <button
                 onClick={() => call(s, 'accept')}
-                className="rounded-xl bg-accent-green px-4 py-3 text-sm font-semibold text-surface transition hover:opacity-90"
+                disabled={Boolean(busy)}
+                className="button-primary"
               >
                 Aceptar
               </button>
               <button
                 onClick={() => call(s, 'reject')}
-                className="rounded-xl border border-surface-border px-4 py-3 text-sm font-semibold text-slate-300 transition hover:border-accent-red/50 hover:text-red-300"
+                disabled={Boolean(busy)}
+                className="button-secondary"
               >
                 Rechazar
               </button>
@@ -89,12 +102,13 @@ export function DriverServices() {
           ) : (
             <button
               onClick={() => call(s, 'status', { status: nextStatus[s.status] })}
-              className="mt-4 w-full rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-surface transition hover:bg-brand-soft"
+              disabled={Boolean(busy)}
+              className="button-primary mt-5 w-full"
             >
-              {nextLabel[s.status]}
+              {busy === s.id ? 'Actualizando…' : nextLabel[s.status]}
             </button>
           )}
-        </motion.div>
+        </article>
       ))}
     </div>
   );

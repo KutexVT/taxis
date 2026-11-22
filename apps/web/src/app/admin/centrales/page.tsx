@@ -21,29 +21,29 @@ export default function CentralesPage() {
     <DashboardShell title="Panel Super Administrador" nav={adminNav}>
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Centrales</h2>
-          <p className="text-sm text-slate-400">Crea y administra las centrales de taxi.</p>
+          <h2 className="text-lg font-semibold text-ink">Centrales</h2>
+          <p className="text-sm text-muted">Crea y administra las centrales de taxi.</p>
         </div>
         <PrimaryButton onClick={() => setCreating(true)}>+ Nueva central</PrimaryButton>
       </div>
 
-      {loading && <p className="text-sm text-slate-400">Cargando...</p>}
-      {error && <p className="text-sm text-red-300">{error}</p>}
+      {loading && <p className="text-sm text-muted">Cargando...</p>}
+      {error && <p className="text-sm text-red-700">{error}</p>}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {data?.centrals.map((c) => (
           <div key={c.id} className="card p-5">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-semibold text-white">{c.name}</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="font-semibold text-ink">{c.name}</h3>
+                <p className="text-xs text-muted">
                   {c.city} · {c.phone}
                 </p>
               </div>
               <Badge value={c.status} />
             </div>
-            <p className="mt-2 text-xs text-slate-500">{c.address}</p>
-            <div className="mt-3 flex gap-4 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-muted">{c.address}</p>
+            <div className="mt-3 flex gap-4 text-xs text-muted">
               <span>{c.adminsCount} locutores</span>
               <span>{c.driversCount} taxistas</span>
             </div>
@@ -55,7 +55,7 @@ export default function CentralesPage() {
       </div>
 
       {data && data.centrals.length === 0 && !loading && (
-        <p className="text-sm text-slate-400">Aun no hay centrales. Crea la primera.</p>
+        <p className="text-sm text-muted">Aun no hay centrales. Crea la primera.</p>
       )}
 
       <CentralFormModal
@@ -174,7 +174,7 @@ function CentralFormModal({
             ]}
           />
         )}
-        {err && <p className="text-sm text-red-300">{err}</p>}
+        {err && <p className="text-sm text-red-700">{err}</p>}
         <div className="flex items-center justify-between pt-2">
           {isEdit ? (
             <GhostButton danger onClick={remove}>

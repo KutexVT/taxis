@@ -34,7 +34,7 @@ export function SosAlerts() {
   }
 
   return (
-    <div className="fixed right-4 top-20 z-[60] w-80 space-y-2">
+    <div role="alert" className="fixed right-4 top-20 z-[60] w-80 max-w-[calc(100%-2rem)] space-y-2">
       <AnimatePresence>
         {alerts.map((a) => (
           <motion.div
@@ -42,18 +42,18 @@ export function SosAlerts() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 40 }}
-            className="rounded-xl border-2 border-accent-red bg-surface-raised p-4 shadow-glow"
+            className="rounded-2xl border-2 border-accent-red bg-surface-raised p-4"
           >
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-red text-xs font-black text-white">
                 SOS
               </span>
-              <p className="text-sm font-semibold text-red-300">¡Emergencia!</p>
+              <p className="text-sm font-semibold text-red-700">¡Emergencia!</p>
             </div>
-            <p className="mt-2 text-sm text-white">
+            <p className="mt-2 text-sm text-ink">
               Taxi {a.taxiNumber} · {a.fullName}
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-muted">
               {a.lat.toFixed(5)}, {a.lng.toFixed(5)}
             </p>
             <div className="mt-3 flex gap-2">
@@ -67,13 +67,14 @@ export function SosAlerts() {
                 href={`https://www.openstreetmap.org/?mlat=${a.lat}&mlon=${a.lng}#map=17/${a.lat}/${a.lng}`}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-lg border border-surface-border px-3 py-1.5 text-xs text-slate-300"
+                className="button-secondary !px-3"
               >
                 Ver mapa
               </a>
               <button
                 onClick={() => dismiss(a.incidentId)}
-                className="rounded-lg border border-surface-border px-2 py-1.5 text-xs text-slate-400"
+                aria-label="Cerrar alerta"
+                className="rounded-lg border border-surface-border px-2 py-1.5 text-xs text-muted"
               >
                 ✕
               </button>

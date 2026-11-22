@@ -48,7 +48,7 @@ function TabButton({
     <button
       onClick={onClick}
       className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-        active ? 'bg-brand/15 text-brand' : 'text-slate-400 hover:bg-surface-overlay hover:text-white'
+        active ? 'bg-brand/15 text-brand' : 'text-muted hover:bg-surface-overlay hover:text-ink'
       }`}
     >
       {children}
